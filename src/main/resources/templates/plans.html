@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Insurance Plans</title>
+
+    <!-- Link the new stylesheet -->
+    <link rel="stylesheet" th:href="@{/css/indexCss.css}">
+    <link rel="stylesheet" th:href="@{/css/nav.css}">
+    <link rel="stylesheet" th:href="@{/css/plancss.css}">
+</head>
+<body>
+<!-- ===== Navigation ===== -->
+<nav>
+    <h2 class="navHeader"><span class="highlight">HealthSure Insurance Lanka</span></h2>
+    <ul class="navLinks">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Contact</a></li>
+    </ul>
+    <div class="getInsurance">
+        <button class="btnInsurance">Get Insurance</button>
+    </div>
+</nav>
+
+<!-- ===== Page Header ===== -->
+<div class="pageTitle">
+    <h2 class="pgt">Insurance plans <br><span class="highlight">for everyone.</span></h2>
+    <p class="sec">Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem cupiditate <br>alias quod assumenda nobis natus cumque iste totam. </p>
+</div>
+
+<!-- ===== Plans List ===== -->
+<section class="plans" th:if="${plans != null and !plans.isEmpty()}">
+    <div class="plan-card" th:each="plan : ${plans}" th:if="${plan.status == 'active'}">
+        <div class="ipimage">
+            <img th:src="@{${plan.coverImageUrl}}" th:if="${plan.coverImageUrl != null}" alt="Plan Image" class="img" />
+            <img src="/img/placeholder.png" th:unless="${plan.coverImageUrl != null}" alt="Plan Image" class="img" />
+        </div>
+
+        <h3 class="head" th:text="${plan.title}">Plan Name</h3>
+        <p class="headdis" th:text="${plan.description}">Description...</p>
+
+        <div class="plan-price">
+            <span class="LkR" th:text="${#numbers.formatDecimal(plan.priceMonth, 1, 2)}">0.00</span>
+            <span class="timeplan">/mo</span>
+        </div>
+
+        <hr />
+
+        <div class="plan-benefits">
+            <h4 class="includetitle">What's included?</h4>
+
+            <!-- Emergency Room Coverage -->
+            <p class="itemname" th:if="${plan.benefitEr}">Emergency Room Coverage</p>
+
+            <!-- Ambulance Services -->
+            <p class="itemname" th:if="${plan.benefitAmbulance}">Ambulance Services</p>
+
+            <!-- Dental Care -->
+            <p class="itemname" th:if="${plan.benefitDental}">Dental Care</p>
+
+            <!-- Vision Coverage -->
+            <p class="itemname" th:if="${plan.benefitVision}">Vision Coverage</p>
+
+            <!-- Travel Protection -->
+            <p class="itemname" th:if="${plan.benefitTravel}">Travel Protection</p>
+
+            <!-- Custom Coverage Details -->
+            <p class="itemname"
+               th:if="${plan.coverDetail != null and !plan.benefitEr and !plan.benefitAmbulance
+                     and !plan.benefitDental and !plan.benefitVision and !plan.benefitTravel}"
+               th:text="${plan.coverDetail}">Details...</p>
+
+            <!-- Default when no specific benefits -->
+            <p class="itemname" th:if="${plan.coverDetail == null and !plan.benefitEr and !plan.benefitAmbulance
+                 and !plan.benefitDental and !plan.benefitVision and !plan.benefitTravel}">
+                Custom Coverage
+            </p>
+        </div>
+
+        <a class="Btn-start" th:href="@{/planProfile(planId=${plan.id})}">Get Insurance</a>
+    </div>
+</section>
+
+
+<!-- Get in touch -->
+<section class="contactContainer">
+    <div class="mainContainer">
+        <div class="mainhalf1">
+            <h3 class="headerof"><span class="highlight1">Get in touch</span> with us.</h3>
+            <p class="titles">Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem cupiditate alias quod assumenda nobis natus cumque iste totam.</p>
+            <button class="btn">Get in touch</button>
+        </div>
+        <div class="mainhalf2">
+            <img src="img/img.png" alt="" width="400">
+        </div>
+    </div>
+</section>
+
+<!-- ===== Empty State ===== -->
+<section class="empty-state" th:if="${plans == null or plans.isEmpty()}">
+    <h3>No active insurance plans available at the moment.</h3>
+</section>
+
+</body>
+</html>
