@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${plan.title + ' - HealthSure Lanka'}">Insurance Plan</title>
+    <link rel="stylesheet" th:href="@{/css/indexCss.css}">
+    <link rel="stylesheet" th:href="@{/css/nav.css}">
+    <link rel="stylesheet" th:href="@{/css/planProfileCss.css}">
+    <link rel="stylesheet" th:href="@{/css/feedbackFooter.css}">
+</head>
+<body>
+<!-- Navigation -->
+<nav>
+    <h2 class="navHeader"><span class="highlight">HealthSure Insurance Lanka</span></h2>
+    <ul class="navLinks">
+        <li><a th:href="@{/home}">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Contact</a></li>
+    </ul>
+    <div class="getInsurance">
+        <a th:href="@{/plans}" class="btnInsurance">View All Plans</a>
+    </div>
+</nav>
+
+<!-- Breadcrumb Navigation (Your Style) -->
+<div class="plan-breadcrumb">
+    <div class="breadcrumb-container">
+        <a th:href="@{/plans}">All Plans</a>
+        <span class="breadcrumb-separator">/</span>
+        <span class="breadcrumb-current" th:text="${plan.title}">Plan Title</span>
+    </div>
+</div>
+
+<!-- Show main plan only if plan exists -->
+<div th:if="${plan != null}">
+    <!-- Plan Profile Container (Your Layout) -->
+    <section class="headContainer">
+        <section class="firstContainer">
+            <!-- Left Section (Plan Details) - Your Structure -->
+            <div class="sectionOne">
+                <!-- Plan Image -->
+                <div class="imageContainer">
+                    <img th:src="${plan.coverImageUrl != null ? plan.coverImageUrl : '/style/image/hh.jpg'}"
+                         th:alt="${plan.title}" class="image">
+                </div>
+
+                <!-- Plan Info Card -->
+                <div class="plan-info-card">
+                    <div class="plan-badge" th:text="${plan.category}">Health</div>
+                    <div class="titleContainer">
+                        <h2 class="title" th:text="${plan.title}">Plan Title</h2>
+                        <p class="description" th:text="${plan.description}">
+                            Comprehensive coverage for your peace of mind and financial security.
+                        </p>
+                    </div>
+
+                    <!-- Plan Meta (Your Style) -->
+                    <div class="plan-meta">
+                        <div class="meta-row">
+                            <span class="meta-label">Plan Code:</span>
+                            <span class="meta-value" th:text="${plan.planCode}">PLAN001</span>
+                        </div>
+                        <div class="meta-row">
+                            <span class="meta-label">Coverage:</span>
+                            <span class="meta-value" th:text="${plan.coverageAmount}">1,000,000 LKR</span>
+                        </div>
+                        <div class="meta-row">
+                            <span class="meta-label">Valid:</span>
+                            <span class="meta-value" th:text="${plan.validFrom}">2024-01-01</span> -
+                            <span th:text="${plan.validTo}">2025-01-01</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Benefits Section (Your Structure) -->
+                <div class="includeContainer">
+                    <h3 class="includetitle">What's included?</h3>
+                    <div class="benefits-container">
+                        <div class="benefit-item" th:if="${plan.benefitEr}">
+                            <span class="benefit-icon"></span>
+                            <span class="itemname">Emergency Room Coverage</span>
+                        </div>
+                        <div class="benefit-item" th:if="${plan.benefitAmbulance}">
+                            <span class="benefit-icon"></span>
+                            <span class="itemname">Ambulance Services</span>
+                        </div>
+                        <div class="benefit-item" th:if="${plan.benefitDental}">
+                            <span class="benefit-icon"></span>
+                            <span class="itemname">Dental Coverage</span>
+                        </div>
+                        <div class="benefit-item" th:if="${plan.benefitVision}">
+                            <span class="benefit-icon"></span>
+                            <span class="itemname">Vision Care</span>
+                        </div>
+                        <div class="benefit-item" th:if="${plan.benefitTravel}">
+                            <span class="benefit-icon"></span>
+                            <span class="itemname">Travel Protection</span>
+                        </div>
+
+                        <!-- Fallback if no benefits -->
+                        <div th:unless="${plan.benefitEr or plan.benefitAmbulance or plan.benefitDental or plan.benefitVision or plan.benefitTravel}"
+                             class="no-benefits">
+                            <span class="itemname" th:text="${plan.coverDetail}">Comprehensive coverage details</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Section (Plan Pricing & Options) - Your Structure -->
+            <div class="sectionTwo">
+                <div class="priceContainer">
+                    <!-- Pricing Header -->
+                    <h1 class="title-of-plan">Choose your plan</h1>
+                    <p class="descript" th:text="${plan.category + ' Insurance'}">Select a payment plan that fits your needs.</p>
+
+                    <!-- Enhanced Pricing Display -->
+                    <div class="pricing-highlight">
+                        <div class="price-display">
+                            <span class="currency">LKR</span>
+                            <span class="price-amount" id="priceAmount" th:text="${plan.priceMonth}">120</span>
+                            <!-- added class for CSS consistency -->
+                            <span class="newdate" id="pricePeriod">/month</span>
+                        </div>
+                        <div class="price-info">
+                            <!-- added class for CSS consistency -->
+                            <span class="price-duration" id="priceDuration">Monthly Payment</span>
+                            <span class="price-savings" th:if="${plan.priceYear < (plan.priceMonth * 12 * 0.9)}">
+                                 Save 10% with annual plan
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Duration Selector (Your Style) -->
+                    <h3 class="selectionMenu">Payment Duration</h3>
+                    <div class="select-menu">
+                        <select class="select" id="insuranceSelect">
+                            <!-- removed inner span (invalid inside <option>) and used th:text instead -->
+                            <option value="1month" th:data-price="${plan.priceMonth}"
+                                    th:text="'1 Month - LKR ' + ${plan.priceMonth}"></option>
+                            <option value="6month" th:data-price="${plan.price6m}"
+                                    th:text="'6 Months - LKR ' + ${plan.price6m}"></option>
+                            <option value="1year" th:data-price="${plan.priceYear}"
+                                    th:text="'1 Year - LKR ' + ${plan.priceYear}"></option>
+                        </select>
+                    </div>
+
+                    <!-- Purchase Actions -->
+                    <div class="purchase-actions">
+                        <form th:action="@{/purchase/{id}(id=${plan.id})}" method="post" class="purchase-form">
+                            <!-- kept same classes but added purchase-btn class (non-thymeleaf change) -->
+                            <button type="submit" class="getbuyBtn">
+                                <span>Get Insurance Now</span>
+                                <span class="btn-icon">→</span>
+                            </button>
+                        </form>
+
+                        <a th:href="@{/plans}" class="back-btn">← Back to All Plans</a>
+                    </div>
+
+                    <!-- Security Features (Your Colors) -->
+                    <div class="security-features">
+                        <div class="security-item">
+                            <span class="security-icon">→</span>
+                            <span class="security-text">SSL Secure Connection</span>
+                        </div>
+                        <div class="security-item">
+                            <span class="security-icon">→</span>
+                            <span class="security-text">Multiple Payment Options</span>
+                        </div>
+                        <div class="security-item">
+                            <span class="security-icon">→</span>
+                            <span class="security-text">24/7 Customer Support</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+</div>
+
+<!-- NEW: Feedback Review Section -->
+<section class="feedback-section">
+    <div class="feedback-container">
+        <h2 class="feedback-title">Customer Feedback</h2>
+        <div class="feedback-form-container">
+            <h3 class="feedback-form-title">Share Your Experience</h3>
+            <form class="feedback-form" action="/submit-feedback" method="post">
+                <div class="form-group">
+                    <label for="feedbackName">Your Name</label>
+                    <input type="text" id="feedbackName" name="name" placeholder="Enter your name" required>
+                </div>
+                <div class="form-group">
+                    <label for="feedbackRating">Rating</label>
+                    <select id="feedbackRating" name="rating" required>
+                        <option value="5">★★★★★ (5 Stars)</option>
+                        <option value="4">★★★★☆ (4 Stars)</option>
+                        <option value="3">★★★☆☆ (3 Stars)</option>
+                        <option value="2">★★☆☆☆ (2 Stars)</option>
+                        <option value="1">★☆☆☆☆ (1 Star)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="feedbackComment">Your Feedback</label>
+                    <textarea id="feedbackComment" name="comment" placeholder="Tell us about your experience" required></textarea>
+                </div>
+                <button type="submit" class="feedback-submit-btn">Submit Feedback</button>
+            </form>
+        </div>
+        <div class="feedback-reviews">
+            <h3 class="reviews-title">What Our Customers Say</h3>
+            <div class="review-item">
+                <div class="review-header">
+                    <span class="review-name">John Doe</span>
+                    <span class="review-rating">★★★★★</span>
+                </div>
+                <p class="review-comment">Excellent service! The plan was easy to understand and the support team was very responsive.</p>
+                <span class="review-date">September 20, 2025</span>
+            </div>
+            <div class="review-item">
+                <div class="review-header">
+                    <span class="review-name">Jane Smith</span>
+                    <span class="review-rating">★★★★☆</span>
+                </div>
+                <p class="review-comment">Good coverage options, but the website could be a bit faster.</p>
+                <span class="review-date">September 15, 2025</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- NEW: Footer Section -->
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-brand">
+            <h2 class="footer-logo">HealthSure Insurance Lanka</h2>
+            <p class="footer-description">Providing comprehensive insurance solutions for your peace of mind.</p>
+        </div>
+        <div class="footer-links">
+            <h3 class="footer-links-title">Quick Links</h3>
+            <ul>
+                <li><a href="/home">Home</a></li>
+                <li><a href="/plans">All Plans</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </div>
+        <div class="footer-contact">
+            <h3 class="footer-contact-title">Contact Us</h3>
+            <p>Email: <a href="mailto:support@healthsure.lk">support@healthsure.lk</a></p>
+            <p>Phone: <a href="tel:+94112345678">+94 112 345 678</a></p>
+            <p>Address: 123 Insurance Plaza, Colombo, Sri Lanka</p>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2025 HealthSure Insurance Lanka. All rights reserved.</p>
+    </div>
+</footer>
+
+<!-- Error Handling (Your Style) -->
+<div th:if="${plan == null}" class="error-container">
+    <div class="error-card">
+        <div class="error-icon">⚠️</div>
+        <h2 class="error-title">Plan Not Found</h2>
+        <p class="error-description">The plan you're looking for doesn't exist or has been removed.</p>
+        <div class="error-actions">
+            <a th:href="@{/plans}" class="btnInsurance error-btn">Browse All Plans</a>
+            <a th:href="@{/home}" class="back-btn">Go to Home</a>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced JavaScript (Your Functionality) -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const priceAmountEl = document.getElementById('priceAmount');
+        const pricePeriodEl = document.getElementById('pricePeriod');
+        const priceDurationEl = document.getElementById('priceDuration');
+        const insuranceSelect = document.getElementById('insuranceSelect');
+        const priceDisplay = document.querySelector('.pricing-highlight');
+        const savingsEl = document.querySelector('.price-savings');
+
+        if (insuranceSelect && priceAmountEl && pricePeriodEl) {
+            // Function to format and update price
+            function updatePriceDisplay(duration, price) {
+                if (price && price !== 'null') {
+                    // Format with commas
+                    const formattedPrice = parseFloat(price).toLocaleString();
+                    priceAmountEl.textContent = formattedPrice;
+
+                    // Update period and duration text
+                    let periodText = '';
+                    let durationText = '';
+
+                    switch(duration) {
+                        case '1month':
+                            periodText = '/month';
+                            durationText = 'Monthly Payment';
+                            // hide savings for monthly
+                            if (savingsEl) savingsEl.style.display = 'none';
+                            priceDisplay.classList.remove('has-savings');
+                            break;
+                        case '6month':
+                            periodText = 'total';
+                            durationText = '6 Months Total';
+                            if (savingsEl) savingsEl.style.display = 'none';
+                            priceDisplay.classList.remove('has-savings');
+                            break;
+                        case '1year':
+                            periodText = 'total';
+                            durationText = 'Annual Payment';
+                            // Show savings if applicable and element exists
+                            try {
+                                const monthlyPriceAttr = insuranceSelect.querySelector('[value="1month"]').getAttribute('data-price');
+                                const monthlyPrice = parseFloat(monthlyPriceAttr);
+                                if (!isNaN(monthlyPrice) && parseFloat(price) < (monthlyPrice * 12 * 0.9)) {
+                                    if (savingsEl) savingsEl.style.display = 'block';
+                                    priceDisplay.classList.add('has-savings');
+                                } else {
+                                    if (savingsEl) savingsEl.style.display = 'none';
+                                    priceDisplay.classList.remove('has-savings');
+                                }
+                            } catch (err) {
+                                // if any error, hide savings (safe fallback)
+                                if (savingsEl) savingsEl.style.display = 'none';
+                                priceDisplay.classList.remove('has-savings');
+                            }
+                            break;
+                    }
+
+                    pricePeriodEl.textContent = periodText;
+                    if (priceDurationEl) priceDurationEl.textContent = durationText;
+
+                    // Add smooth transition
+                    priceDisplay.style.transition = 'all 0.3s ease';
+                }
+            }
+
+            // Set initial price on load
+            const initialOption = insuranceSelect.options[insuranceSelect.selectedIndex];
+            const initialPrice = initialOption ? initialOption.getAttribute('data-price') : null;
+            if (initialOption) updatePriceDisplay(initialOption.value, initialPrice);
+
+            // Handle duration change
+            insuranceSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                const newPrice = selectedOption.getAttribute('data-price');
+                const duration = selectedOption.value;
+
+                updatePriceDisplay(duration, newPrice);
+            });
+
+            // Add hover effects to benefits
+            document.querySelectorAll('.benefit-item').forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateX(5px)';
+                });
+                item.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateX(0)';
+                });
+            });
+
+            // Add click animation to purchase button (prefers purchase-btn, fallback to btnInsurance)
+            const purchaseBtn = document.querySelector('.purchase-btn') || document.querySelector('.btnInsurance');
+            if (purchaseBtn) {
+                purchaseBtn.addEventListener('click', function(e) {
+                    // small scale animation
+                    this.style.transform = 'scale(0.98)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 150);
+                });
+            }
+
+            // Add click animation to feedback submit button
+            const feedbackSubmitBtn = document.querySelector('.feedback-submit-btn');
+            if (feedbackSubmitBtn) {
+                feedbackSubmitBtn.addEventListener('click', function(e) {
+                    this.style.transform = 'scale(0.98)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 150);
+                });
+            }
+
+            // Add hover effects to feedback reviews
+            document.querySelectorAll('.review-item').forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                });
+                item.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        }
+    });
+</script>
+
+</body>
+</html>
