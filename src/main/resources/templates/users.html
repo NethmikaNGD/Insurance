@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Users Management</title>
+</head>
+<body>
+<h2>Users</h2>
+
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+    <tr th:each="user : ${users}">
+        <td th:text="${user.id}"></td>
+        <td th:text="${user.username}"></td>
+        <td th:text="${user.email}"></td>
+        <td th:text="${user.active ? 'Active' : 'Inactive'}"></td>
+        <td>
+            <a th:href="@{/admin/users/delete/{id}(id=${user.id})}">Delete</a>
+            <a th:href="@{/admin/users/activate/{id}(id=${user.id})}">Activate</a>
+            <a th:href="@{/admin/users/deactivate/{id}(id=${user.id})}">Deactivate</a>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

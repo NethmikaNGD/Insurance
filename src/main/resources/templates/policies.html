@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Policies Management</title>
+</head>
+<body>
+<h2>Policies</h2>
+
+<!-- Add new policy form -->
+<form th:action="@{/policies/add}" method="post">
+    <input type="text" name="policyName" placeholder="Policy Name" required/>
+    <input type="text" name="description" placeholder="Description"/>
+    <button type="submit">Add Policy</button>
+</form>
+
+<!-- List policies -->
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+    <tr th:each="policy : ${policies}">
+        <td th:text="${policy.id}"></td>
+        <td th:text="${policy.policyName}"></td>
+        <td th:text="${policy.description}"></td>
+        <td th:text="${policy.active ? 'Active' : 'Inactive'}"></td>
+        <td>
+            <a th:href="@{/policies/delete/{id}(id=${policy.id})}">Delete</a>
+            <a th:href="@{/policies/activate/{id}(id=${policy.id})}">Activate</a>
+            <a th:href="@{/policies/deactivate/{id}(id=${policy.id})}">Deactivate</a>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>
