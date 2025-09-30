@@ -1,13 +1,20 @@
 package com.pg91.insurance.entity;
 
 import jakarta.persistence.*;
+<<<<<<< Updated upstream
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+=======
+
+import java.time.LocalDate;
+import java.util.Date;
+>>>>>>> Stashed changes
 
 @Entity
 @Table(name = "Claims")
 public class Claim {
+<<<<<<< Updated upstream
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -88,3 +95,82 @@ public class Claim {
     public UserPolicy getUserPolicy() { return userPolicy; }
     public void setUserPolicy(UserPolicy userPolicy) { this.userPolicy = userPolicy; }
 }
+=======
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long claimId;
+
+    @ManyToOne
+    @JoinColumn(name = "policy_id")
+    private UserPolicy policy;
+
+    private String hospitalName;
+    private LocalDate treatmentDate;
+    private Double amountRequested;
+
+    private String status = "pending"; // pending, approved, rejected
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private java.util.Date createdAt = new java.util.Date();
+
+    public Long getClaimId() {
+        return claimId;
+    }
+
+    public void setClaimId(Long claimId) {
+        this.claimId = claimId;
+    }
+
+    public UserPolicy getPolicy() {
+        return policy;
+    }
+
+    public void setPolicy(UserPolicy policy) {
+        this.policy = policy;
+    }
+
+    public String getHospitalName() {
+        return hospitalName;
+    }
+
+    public void setHospitalName(String hospitalName) {
+        this.hospitalName = hospitalName;
+    }
+
+    public LocalDate getTreatmentDate() {
+        return treatmentDate;
+    }
+
+    public void setTreatmentDate(LocalDate treatmentDate) {
+        this.treatmentDate = treatmentDate;
+    }
+
+    public Double getAmountRequested() {
+        return amountRequested;
+    }
+
+    public void setAmountRequested(Double amountRequested) {
+        this.amountRequested = amountRequested;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+// getters + setters
+}
+
+
+>>>>>>> Stashed changes

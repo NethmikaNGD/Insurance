@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Claim Details</title></head>
+<body>
+<h2>Claim Details</h2>
+
+<p><b>User:</b> <span th:text="${dto.user.name}"></span></p>
+<p><b>Email:</b> <span th:text="${dto.user.email}"></span></p>
+<p><b>Hospital:</b> <span th:text="${dto.claim.hospitalName}"></span></p>
+<p><b>Amount:</b> <span th:text="${dto.claim.amountRequested}"></span></p>
+
+<h3>Documents</h3>
+<ul>
+    <li th:each="doc : ${dto.documents}" th:text="${doc.filePath}"></li>
+</ul>
+
+<form th:action="@{'/admin/claims/' + ${dto.claim.claimId} + '/approve'}" method="post">
+    <button type="submit">Approve</button>
+</form>
+<form th:action="@{'/admin/claims/' + ${dto.claim.claimId} + '/reject'}" method="post">
+    <button type="submit">Reject</button>
+</form>
+
+<a href="/admin/claims">Back to List</a>
+</body>
+</html>

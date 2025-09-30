@@ -6,6 +6,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "User_Policies")
 public class UserPolicy {
+<<<<<<< Updated upstream
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -72,3 +73,67 @@ public class UserPolicy {
     public Policy getInsurancePlan() { return insurancePlan; }
     public void setInsurancePlan(Policy insurancePlan) { this.insurancePlan = insurancePlan; }
 }
+=======
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long policyId;
+
+    @ManyToOne
+    @JoinColumn(name = "app_user_id")
+    private AppUser appUser;
+
+    private Integer planId;  // could be mapped to InsurancePlan entity if needed
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private String status;
+
+    public Long getPolicyId() {
+        return policyId;
+    }
+
+    public void setPolicyId(Long policyId) {
+        this.policyId = policyId;
+    }
+
+    public AppUser getAppUser() {
+        return appUser;
+    }
+
+    public void setAppUser(AppUser appUser) {
+        this.appUser = appUser;
+    }
+
+    public Integer getPlanId() {
+        return planId;
+    }
+
+    public void setPlanId(Integer planId) {
+        this.planId = planId;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+}
+
+>>>>>>> Stashed changes

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Pending Claims</title></head>
+<body>
+<h2>Pending Claims</h2>
+<table border="1">
+    <tr>
+        <th>ID</th><th>User</th><th>Hospital</th><th>Amount</th><th>Details</th>
+    </tr>
+    <tr th:each="c : ${claims}">
+        <td th:text="${c.claimId}"></td>
+        <td th:text="${c.policy.appUser.name}"></td>
+        <td th:text="${c.hospitalName}"></td>
+        <td th:text="${c.amountRequested}"></td>
+        <td><a th:href="@{'/admin/claims/' + ${c.claimId}}">View</a></td>
+    </tr>
+</table>
+</body>
+</html>
