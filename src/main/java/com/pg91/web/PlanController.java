@@ -32,19 +32,19 @@ public class PlanController {
         if (result.hasErrors()) {
             System.out.println("Form errors: " + result.getAllErrors());
             ra.addFlashAttribute("error", "Please correct the form errors.");
-            return "redirect:/adminDashboard/insurancePlanCreate"; // Fixed: Consistent redirect
+            return "redirect:/adminDashboard/insurancePlanCreate";
         }
 
         try {
             System.out.println("Create Plan button clicked!");
             service.savePlan(form);
             ra.addFlashAttribute("message", "Plan created successfully!");
-            return "redirect:/adminDashboard/dashboard"; // Fixed: Redirect to prefixed dashboard
+            return "redirect:/insurancePlanCreate";
         } catch (Exception e) {
             System.err.println("Error creating plan: " + e.getMessage());
             e.printStackTrace();
             ra.addFlashAttribute("error", "Failed to create plan: " + e.getMessage());
-            return "redirect:/adminDashboard/insurancePlanCreate"; // Fixed: Consistent redirect
+            return "redirect:/insurancePlanCreate";
         }
     }
 
@@ -56,12 +56,9 @@ public class PlanController {
     @GetMapping("/newPlan")
     public String createPlan(Model model) {
         model.addAttribute("insurancePlanForm", new InsurancePlanForm());
-        return "adminDashboard/insurancePlanCreate";
+        return "/adminDashboard/insurancePlanCreate";
     }
 
-    // Removed redundant /home and /dashboard mappings
-
-    // Customer-facing plans page - shows only active plans (no prefix)
     @GetMapping("/plans")
     public String getCustomerPlans(Model model) {
         List<InsurancePlan> activePlans = service.getActivePlans();
@@ -70,8 +67,8 @@ public class PlanController {
         return "plans";
     }
 
-    // Admin view - shows all plans (prefixed)
-    @GetMapping("/viewPlans") // Fixed: Prefixed for admin
+
+    @GetMapping("/viewPlans")
     public String viewPlans(Model model) {
         System.out.println("View Plans button clicked!");
         List<InsurancePlan> plans = service.getAllPlans();
@@ -90,7 +87,7 @@ public class PlanController {
         return "adminDashboard/viewPlans";
     }
 
-    // Plan profile - check if plan is active (customer-facing, no prefix)
+
     @GetMapping("/planProfile")
     public String viewPlanProfile(@RequestParam("planId") Integer planId, Model model) {
         try {
@@ -118,11 +115,11 @@ public class PlanController {
         }
     }
 
-    @GetMapping("/editPlan") // Fixed: Prefixed for admin
+    @GetMapping("/editPlan")
     public String showEditForm(@RequestParam("planId") Integer planId, Model model) {
         InsurancePlan plan = service.getPlanById(planId);
         if (plan == null) {
-            return "redirect:/adminDashboard/viewPlans";
+            return "redirect:adminDashboard/viewPlans";
         }
 
         InsurancePlanForm form = service.mapEntityToForm(plan);
@@ -138,7 +135,7 @@ public class PlanController {
                              RedirectAttributes ra) {
         if (result.hasErrors()) {
             ra.addFlashAttribute("error", "Please correct the errors.");
-            return "redirect:/adminDashboard/editPlan?planId=" + planId;
+            return "redirect:/editPlan?planId=" + planId;
         }
         try {
             service.updatePlan(planId, form);
@@ -146,14 +143,14 @@ public class PlanController {
         } catch (Exception e) {
             ra.addFlashAttribute("error", "Update failed: " + e.getMessage());
         }
-        return "redirect:/adminDashboard/viewPlans";
+        return "redirect:/viewPlans";
     }
 
     @GetMapping("/deletePlan") // Fixed: Prefixed for admin
     public String showDeleteConfirm(@RequestParam("planId") Integer planId, Model model) {
         InsurancePlan plan = service.getPlanById(planId);
         if (plan == null) {
-            return "redirect:/adminDashboard/viewPlans";
+            return "redirect:/viewPlans";
         }
         model.addAttribute("plan", plan);
         return "adminDashboard/deleteConfirm";
@@ -166,7 +163,7 @@ public class PlanController {
         if ("CONFIRM".equalsIgnoreCase(confirmation)) {
             InsurancePlan plan = service.getPlanById(planId);
             if (plan != null) {
-                Integer userId = 1; // TODO: Get from authentication session
+                Integer userId = 1; // add the user ID
                 service.deletePlan(planId);
                 auditLogService.logAction(userId, "DELETE_PLAN", "user deleted the planid" + planId);
                 ra.addFlashAttribute("message", "Plan deleted successfully!");
@@ -176,7 +173,7 @@ public class PlanController {
         } else {
             ra.addFlashAttribute("error", "Confirmation failed. Plan not deleted.");
         }
-        return "redirect:/adminDashboard/viewPlans";
+        return "redirect:viewPlans";
     }
 
     // Removed redundant /login mapping

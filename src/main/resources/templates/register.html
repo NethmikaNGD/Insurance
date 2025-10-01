@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{style/nav.css}">
+    <link rel="stylesheet" th:href="@{style/auth.css}">
+    <title>Register - HealthSure Insurance Lanka</title>
+    <link rel="icon" href="img/img.png">
+</head>
+<body>
+<nav>
+    <h2 class="navHeader"><span class="highlight">HealthSure Insurance Lanka</span></h2>
+    <ul class="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Contact</a></li>
+    </ul>
+    <div class="getInsurance">
+        <a href="login.html"><button class="btnInsurance">Log in</button></a>
+    </div>
+</nav>
+
+<main class="auth-wrapper">
+    <div class="auth-illustration"></div>
+    <section class="auth-panel">
+        <div class="auth-card">
+            <h1 class="auth-title">Create your account</h1>
+            <p class="auth-subtitle">Join <span class="highlight">HealthSure</span> and protect what matters.</p>
+
+            <form class="auth-form" id="registerForm">
+                <div>
+                    <label for="fullName">Full name</label>
+                    <input type="text" id="fullName" placeholder="Jane Doe" required>
+                </div>
+                <div>
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="you@example.com" required>
+                </div>
+                <div>
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Create a password" required>
+                </div>
+                <div>
+                    <label for="confirm">Confirm password</label>
+                    <input type="password" id="confirm" placeholder="Re-enter password" required>
+                </div>
+                <div class="auth-actions">
+                    <button class="auth-btn" type="submit">Create account</button>
+                    <a class="auth-link" href="login.html">Have an account? Log in</a>
+                </div>
+                <p class="auth-note" id="errorMessage" style="color: red; display: none;"></p>
+            </form>
+        </div>
+    </section>
+</main>
+
+<script>
+    document.getElementById('registerForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const errorMessage = document.getElementById('errorMessage');
+        errorMessage.style.display = 'none';
+
+        const fullName = document.getElementById('fullName').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm').value;
+
+        try {
+            const response = await fetch('http://localhost:8080/api/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    fullName,
+                    email,
+                    password,
+                    confirmPassword
+                }),
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                window.location.href = 'login.html';
+            } else {
+                errorMessage.textContent = result || 'Registration failed';
+                errorMessage.style.display = 'block';
+            }
+        } catch (error) {
+            errorMessage.textContent = 'An error occurred. Please try again.';
+            errorMessage.style.display = 'block';
+        }
+    });
+</script>
+</body>
+</html>

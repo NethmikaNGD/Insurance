@@ -9,13 +9,14 @@
     <link rel="stylesheet" th:href="@{/css/indexCss.css}">
     <link rel="stylesheet" th:href="@{/css/nav.css}">
     <link rel="stylesheet" th:href="@{/css/plancss.css}">
+    <link rel="stylesheet" th:href="@{/css/feedbackFooter.css}">
 </head>
 <body>
 <!-- ===== Navigation ===== -->
 <nav>
     <h2 class="navHeader"><span class="highlight">HealthSure Insurance Lanka</span></h2>
     <ul class="navLinks">
-        <li><a href="#">Home</a></li>
+        <li><a th:href="@{/}">Home</a></li>
         <li><a href="#">About</a></li>
         <li><a href="#">Contact</a></li>
     </ul>
@@ -98,10 +99,38 @@
     </div>
 </section>
 
-<!-- ===== Empty State ===== -->
-<section class="empty-state" th:if="${plans == null or plans.isEmpty()}">
-    <h3>No active insurance plans available at the moment.</h3>
-</section>
+<!--&lt;!&ndash; ===== Empty State ===== &ndash;&gt;-->
+<!--<section class="empty-state" th:if="${plans == null or plans.isEmpty()}">-->
+<!--    <h3>No active insurance plans available at the moment.</h3>-->
+<!--</section>-->
+
+<!-- NEW: Footer Section -->
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-brand">
+            <h2 class="footer-logo">HealthSure Insurance Lanka</h2>
+            <p class="footer-description">Providing comprehensive insurance solutions for your peace of mind.</p>
+        </div>
+        <div class="footer-links">
+            <h3 class="footer-links-title">Quick Links</h3>
+            <ul>
+                <li><a th:href="@{/}">Home</a></li>
+                <li><a th:href="@{/plans}">All Plans</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </div>
+        <div class="footer-contact">
+            <h3 class="footer-contact-title">Contact Us</h3>
+            <p>Email: <a href="mailto:support@healthsure.lk">support@healthsure.lk</a></p>
+            <p>Phone: <a href="tel:+94112345678">+94 112 345 678</a></p>
+            <p>Address: 123 Insurance Plaza, Colombo, Sri Lanka</p>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2025 HealthSure Insurance Lanka. All rights reserved.</p>
+    </div>
+</footer>
 
 </body>
 </html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Insurance Admin Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/adminDashCss.css}">
+    <link rel="stylesheet" th:href="@{/css/from.css}">
+</head>
+<body>
+<!-- ===== Sidebar ===== -->
+<aside class="sidebar">
+    <div class="brand">HealthSure Lanka</div>
+    <nav>
+        <a th:href="@{/dashboard}" class="active">Dashboard</a>
+        <a th:href="@{/viewPlans}">Insurance Plans</a>
+        <a th:href="@{/viewPlans}" class="active"> → View All Plans</a>
+        <a href="#">Users</a>
+        <a href="#">Claims</a>
+        <a href="#">Reports</a>
+        <a href="#">Settings</a>
+    </nav>
+</aside>
+
+<!-- ===== Main Content ===== -->
+<main class="main">
+    <header class="topbar">
+        <h1>Insurance Plan Create</h1>
+        <div class="user">
+            <span class="role">Staff,</span>
+            <span class="username">Dineth</span>
+        </div>
+    </header>
+
+    <!-- Fixed: Removed extra main tag and proper container structure -->
+    <div class="container">
+        <section class="card">
+            <div class="card-head">
+                <h2>Create Plan</h2>
+                <div class="who">
+                    Dineth<br><small>ID: 21</small>
+                </div>
+            </div>
+            <form class="plan-form" action="/createPlan" method="post" enctype="multipart/form-data" th:object="${insurancePlanForm}">
+                <label for="userId">Staff User ID</label>
+                <div>
+                    <input id="userId" name="userId" type="number" th:field="*{userId}" placeholder="Enter your user ID" required />
+                    <div class="hint">This links the plan to the staff member.</div>
+                </div>
+
+                <label for="planName">Plan Title</label>
+                <div>
+                    <input id="planName" name="planName" type="text" th:field="*{planName}" placeholder="Enter insurance plan title" required />
+                    <div class="hint">This is shown to customers. Keep it short and clear.</div>
+                </div>
+
+                <label for="planCode">Plan Code</label>
+                <div>
+                    <input id="planCode" name="planCode" type="text" th:field="*{planCode}" placeholder="e.g., HLTH-PLUS-21" required />
+                    <div class="hint">Unique identifier for internal use.</div>
+                </div>
+
+                <label for="category">Category</label>
+                <div>
+                    <select id="category" name="category" th:field="*{category}" required>
+                        <option value="" selected disabled>Select a category</option>
+                        <option value="Health">Health</option>
+                        <option value="Auto">Auto</option>
+                        <option value="Home">Home</option>
+                        <option value="Travel">Travel</option>
+                        <option value="Life">Life</option>
+                    </select>
+                </div>
+
+                <label for="planDescription">Plan Description</label>
+                <div>
+                    <textarea id="planDescription" name="planDescription" th:field="*{planDescription}" placeholder="Enter insurance plan descriptions" required></textarea>
+                </div>
+
+                <label for="planCoverDetail">Cover Detail</label>
+                <div>
+                    <textarea id="planCoverDetail" name="planCoverDetail" th:field="*{planCoverDetail}" placeholder="Enter insurance plan cover details" required></textarea>
+                    <div class="hint">Example: In-patient up to $50,000, emergency room, ambulance, etc.</div>
+                </div>
+
+                <label for="coverageAmount">Coverage Amount</label>
+                <div class="price-item">
+                    <span class="currency">LKR</span>
+                    <input id="coverageAmount" name="coverageAmount" type="number" th:field="*{coverageAmount}" placeholder="50000" min="0" step="100" required />
+                </div>
+
+                <label for="validFrom">Valid From</label>
+                <div>
+                    <input id="validFrom" name="validFrom" type="date" th:field="*{validFrom}" required />
+                </div>
+
+                <label for="validTo">Valid To</label>
+                <div>
+                    <input id="validTo" name="validTo" type="date" th:field="*{validTo}" />
+                </div>
+
+                <label>Plan Price</label>
+                <div class="prices">
+                    <div class="price-item">
+                        <span class="currency">1 mo</span>
+                        <input type="number" name="oneMonthPrice" th:field="*{oneMonthPrice}" placeholder="One month price" min="0" step="0.01" required />
+                    </div>
+                    <div class="price-item">
+                        <span class="currency">6 mo</span>
+                        <input type="number" name="sixMonthsPrice" th:field="*{sixMonthsPrice}" placeholder="Six month price" min="0" step="0.01" />
+                    </div>
+                    <div class="price-item">
+                        <span class="currency">1 yr</span>
+                        <input type="number" name="oneYearPrice" th:field="*{oneYearPrice}" placeholder="One year price" min="0" step="0.01" />
+                    </div>
+                </div>
+
+                <label for="coverImage">Upload Cover Image</label>
+                <div>
+                    <input id="coverImage" name="coverImage" type="file" accept="image/png,image/jpeg,image/webp" th:field="*{coverImage}" />
+                    <div class="hint">PNG, JPG, or WEBP. Max ~2–3MB.</div>
+                </div>
+
+                <label>Status</label>
+                <div class="segmented">
+                    <input type="radio" id="status-active" name="status" th:field="*{status}" value="active" checked />
+                    <label for="status-active">Active</label>
+                    <input type="radio" id="status-draft" name="status" th:field="*{status}" value="draft" />
+                    <label for="status-draft">Draft</label>
+                </div>
+
+                <label>Benefits</label>
+                <div class="benefits-grid full">
+                    <label class="switch">
+                        <input type="checkbox" name="benefitEr" th:field="*{benefitEr}" /> Emergency Room
+                    </label>
+                    <label class="switch">
+                        <input type="checkbox" name="benefitAmbulance" th:field="*{benefitAmbulance}" /> Ambulance
+                    </label>
+                    <label class="switch">
+                        <input type="checkbox" name="benefitDental" th:field="*{benefitDental}" /> Dental
+                    </label>
+                    <label class="switch">
+                        <input type="checkbox" name="benefitVision" th:field="*{benefitVision}" /> Vision
+                    </label>
+                    <label class="switch">
+                        <input type="checkbox" name="benefitTravel" th:field="*{benefitTravel}" /> Travel Assist
+                    </label>
+                </div>
+
+                <div class="actions full">
+                    <button class="btn secondary" type="reset">Clear</button>
+                  <a th:href="@{/viewPlans}"><button class="btn" type="submit">Create Plan</button></a>
+                </div>
+            </form>
+        </section>
+    </div>
+</main>
+</body>
+</html>

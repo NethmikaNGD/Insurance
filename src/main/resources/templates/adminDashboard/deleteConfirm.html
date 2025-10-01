@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Confirm Delete Plan</title>
+  <link rel="stylesheet" th:href="@{/css/adminDashCss.css}">
+  <link rel="stylesheet" th:href="@{/css/from.css}">
+</head>
+<body>
+<!-- ===== Sidebar ===== -->
+<aside class="sidebar">
+  <div class="brand">HealthSure Lanka</div>
+  <nav>
+    <a th:href="@{/dashboard}">Dashboard</a>
+    <a th:href="@{/viewPlans}" class="active">Insurance Plans</a>
+    <a th:href="@{/viewPlans}" class="active"> → View All Plans</a>
+    <a th:href="@{/newPlan}" class="sub-item"> → Create Plan</a>
+    <a href="#">Users</a>
+    <a href="#">Claims</a>
+    <a href="#">Reports</a>
+    <a href="#">Settings</a>
+  </nav>
+</aside>
+
+<!-- ===== Main Content ===== -->
+<main class="main">
+  <header class="topbar">
+    <h1>Confirm Delete Insurance Plan</h1>
+    <div class="user">
+      <span class="role">Staff,</span>
+      <span class="username">Dineth</span>
+    </div>
+  </header>
+
+  <div class="container">
+    <section class="card">
+      <div class="card-head">
+        <h2>Delete Confirmation</h2>
+        <div class="who">
+          Dineth<br><small>ID: 21</small>
+        </div>
+      </div>
+      <form th:action="@{/confirmDelete}" method="post">
+        <input type="hidden" name="planId" th:value="${plan.id}" />
+        <p>Are you sure you want to delete the plan "<span th:text="${plan.title}"></span>" (ID: <span th:text="${plan.id}"></span>)? This action cannot be undone.</p>
+        <p>Type "CONFIRM" to proceed:</p>
+        <div>
+          <input type="text" name="confirmation" required />
+        </div>
+        <div class="actions full">
+          <a th:href="@{/viewPlans}" class="btn secondary">Cancel</a>
+          <button class="btn" type="submit">Delete Plan</button>
+        </div>
+      </form>
+    </section>
+  </div>
+</main>
+</body>
+</html>
