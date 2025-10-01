@@ -11,69 +11,67 @@ import java.sql.Date;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "Insurance_Plans")  // <-- FIXED: Match your exact table name
+@Table(name = "Insurance_Plans")
 @EntityListeners(AuditingEntityListener.class)
 public class InsurancePlan {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "plan_id")  // <-- FIXED: Match your database primary key
+    @Column(name = "plan_id")
     private Integer id;
 
     @Column(name = "app_user_id")
-    @NotNull  // <-- REQUIRED by database
-    private Integer appUserId;  // <-- FIXED: Match database column name
+    @NotNull
+    private Integer appUserId;
 
-//    @ManyToOne
-//    @JoinColumn(name = "app_user_id", insertable = false, updatable = false)
-//    private AppUser createdBy;
+
 
     @Column(name = "title")
-    @NotNull  // <-- REQUIRED by database
+    @NotNull
     private String title;
 
     @Column(name = "plan_code")
-    @NotNull  // <-- REQUIRED by database
+    @NotNull
     private String planCode;
 
     @Column(name = "category")
-    @NotNull  // <-- REQUIRED by database
+    @NotNull
     private String category;
 
     @Column(name = "description")
-    @NotNull  // <-- REQUIRED by database
+    @NotNull
     private String description;
 
     @Column(name = "cover_detail")
-    @NotNull  // <-- REQUIRED by database
+    @NotNull
     private String coverDetail;
 
     @Column(name = "coverage_amount")
-    @NotNull  // <-- REQUIRED by database
+    @NotNull
     private BigDecimal coverageAmount;
 
     @Column(name = "valid_from")
-    @NotNull  // <-- REQUIRED by database
+    @NotNull
     private Date validFrom;
 
     @Column(name = "valid_to")
-    private Date validTo;  // Can be NULL
+    private Date validTo;
 
     @Column(name = "price_month")
-    @NotNull  // <-- REQUIRED by database
+    @NotNull
     private BigDecimal priceMonth;
 
     @Column(name = "price_6m")
-    private BigDecimal price6m;  // Can be NULL
+    private BigDecimal price6m;
 
     @Column(name = "price_year")
-    private BigDecimal priceYear;  // Can be NULL
+    private BigDecimal priceYear;
 
     @Column(name = "cover_image_url")
-    private String coverImageUrl;  // Can be NULL
+    private String coverImageUrl;
 
     @Column(name = "status")
-    private String status = "active";  // Default value
+    private String status = "active";
 
     @Column(name = "benefit_er")
     private Boolean benefitEr = false;
@@ -105,7 +103,7 @@ public class InsurancePlan {
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 
-    // FIXED: Use appUserId to match database column
+    // Use appUserId to match database column
     public Integer getAppUserId() { return appUserId; }
     public void setAppUserId(Integer appUserId) { this.appUserId = appUserId; }
 
