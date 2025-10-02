@@ -1,0 +1,199 @@
+
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2c3e50;
+    --success-color: #2ecc71;
+    --warning-color: #f39c12;
+    --danger-color: #e74c3c;
+    --light-bg: #f8f9fa;
+}
+
+body {
+    background-color: #f5f7fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+}
+
+.container {
+    max-width: 1000px;
+}
+
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.card-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 1.5rem;
+    border-bottom: none;
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.status-pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-approved {
+    background-color: #d1edff;
+    color: #0c5460;
+}
+
+.status-rejected {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.status-processing {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.detail-row {
+    padding: 1rem 0;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    /*justify-content:;*/
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: var(--secondary-color);
+    min-width: 200px;
+}
+
+.detail-value {
+    color: #555;
+    flex: 1;
+}
+
+.document-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+
+.document-icon {
+    color: var(--primary-color);
+    font-size: 1.25rem;
+    margin-right: 1rem;
+}
+
+.action-btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-modify {
+    background-color: var(--warning-color);
+    border: none;
+    color: white;
+}
+
+.btn-delete {
+    background-color: var(--danger-color);
+    border: none;
+    color: white;
+}
+
+.btn-track {
+    background-color: var(--primary-color);
+    border: none;
+    color: white;
+}
+
+.confirmation-modal .modal-content {
+    border-radius: 12px;
+    border: none;
+}
+
+.confirmation-modal .modal-header {
+    background-color: var(--danger-color);
+    color: white;
+    border-bottom: none;
+}
+
+.timeline {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: #e9ecef;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -2rem;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    border: 3px solid white;
+    box-shadow: 0 0 0 2px var(--primary-color);
+}
+
+.timeline-content {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+@media (max-width: 768px) {
+    .detail-row {
+        flex-direction: column;
+    }
+
+    .detail-label {
+        min-width: auto;
+        margin-bottom: 0.5rem;
+    }
+
+    .action-btn {
+        width: 100%;
+        margin-right: 0;
+    }
+}

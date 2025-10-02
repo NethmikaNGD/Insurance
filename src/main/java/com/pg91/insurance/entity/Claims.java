@@ -1,38 +1,41 @@
 package com.pg91.insurance.entity;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Table(name = "claims")
-public class Claim {
+public class Claims {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    @Column(nullable = false)
-    private String policyholderId; // Reference to user/policyholder
+    @Column(name = "policyholder_id", nullable = false)
+    private String policyholderId;
 
-    @Column(nullable = false)
+    @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(nullable = false)
+    @Column(name = "submission_date", nullable = false)
     private LocalDateTime submissionDate;
 
+    @Column(name = "incidentDate", nullable = false)
+    private LocalDateTime incidentDate;
+
+    @Column(name = "claimAmount", nullable = false)
+    private Double claimAmount;
+
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private ClaimStatus status = ClaimStatus.PENDING; // Enum for status
+    @Column(name = "status", nullable = false)
+    private ClaimStatus status = ClaimStatus.PENDING;
 
     @ElementCollection
-    private List<String> documentPaths; // List of uploaded document paths
-
-
-
-
-
+    @CollectionTable(name = "claims_document_paths", joinColumns = @JoinColumn(name = "claims_id"))
+    @Column(name = "document_paths")
+    private List<String> documentPaths;
 
     // Getters and Setters
     public Long getId() {
@@ -67,6 +70,22 @@ public class Claim {
         this.submissionDate = submissionDate;
     }
 
+    public LocalDateTime getIncidentDate() {
+        return incidentDate;
+    }
+
+    public void setIncidentDate(LocalDateTime incidentDate) {
+        this.incidentDate = incidentDate;
+    }
+
+    public Double getClaimAmount() {
+        return claimAmount;
+    }
+
+    public void setClaimAmount(Double claimAmount) {
+        this.claimAmount = claimAmount;
+    }
+
     public ClaimStatus getStatus() {
         return status;
     }
@@ -76,8 +95,9 @@ public class Claim {
     }
 
     public List<String> getDocumentPaths() {
-            return documentPaths;
+        return documentPaths;
     }
+
     public void setDocumentPaths(List<String> documentPaths) {
         this.documentPaths = documentPaths;
     }

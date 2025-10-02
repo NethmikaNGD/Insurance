@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claim Submission Details - PG91 Insurance</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div class="container my-5">
+    <!-- Success/Error Alert -->
+    <div th:if="${message}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i>
+        <strong>Success!</strong> <span th:text="${message}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle me-2"></i>
+        <strong>Error!</strong> <span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Header Card -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="h3 mb-0">Claim Submission Details</h1>
+                <p class="mb-0 opacity-75">Your health insurance claim has been received</p>
+            </div>
+            <div class="text-end">
+                <div class="status-badge" th:classappend="'status-' + ${claim.status.toString().toLowerCase()}" th:text="${claim.status}">
+                    PENDING
+                </div>
+                <div class="text-white-50 small mt-1">Claim ID: <span th:text="${claim.id}">12345</span></div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <!-- Claim Details Section -->
+            <h4 class="mb-4">
+                <i class="fas fa-file-medical me-2 text-primary"></i>
+                Claim Information
+            </h4>
+
+            <div class="detail-row">
+                <div class="detail-label">Policyholder ID</div>
+                <div class="detail-value" th:text="${claim.policyholderId}">PH-123456</div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">Claim Type</div>
+                <div class="detail-value">
+                    <i class="fas fa-heartbeat me-2 text-primary"></i>
+                    Health Insurance
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">Treatment Date</div>
+                <div class="detail-value" th:text="${#temporals.format(claim.incidentDate, 'MMMM dd, yyyy')}">January 15, 2024</div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">Claim Amount</div>
+                <div class="detail-value">
+                    <strong class="h5 text-primary" th:text="'Rs.' + ${#numbers.formatDecimal(claim.claimAmount, 1, 2)}">Rs.1,500.00</strong>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">Medical Details</div>
+                <div class="detail-value" th:text="${claim.description}">Detailed description of the medical treatment and condition...</div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">Submission Date</div>
+                <div class="detail-value" th:text="${#temporals.format(claim.submissionDate, 'MMMM dd, yyyy - HH:mm')}">January 16, 2024 - 14:30</div>
+            </div>
+
+            <!-- Uploaded Documents Section -->
+            <h5 class="mt-5 mb-3">
+                <i class="fas fa-file-upload me-2 text-primary"></i>
+                Uploaded Medical Documents
+            </h5>
+
+            <div th:if="${claim.documentPaths != null and !claim.documentPaths.isEmpty()}">
+                <div class="document-item" th:each="doc : ${claim.documentPaths}">
+                    <i class="document-icon fas" th:classappend="${doc.endsWith('.pdf')} ? 'fa-file-pdf' : 'fa-file-image'"></i>
+                    <div class="flex-grow-1">
+                        <div class="fw-bold" th:text="${doc.substring(doc.lastIndexOf('/') + 1)}">medical_report.pdf</div>
+                        <div class="text-muted small">File Path: <span th:text="${doc}"></span></div>
+                    </div>
+                    <a th:href="@{${doc}}" class="btn btn-outline-primary btn-sm" download>
+                        <i class="fas fa-download me-1"></i>Download
+                    </a>
+                </div>
+            </div>
+
+            <div th:if="${claim.documentPaths == null or claim.documentPaths.isEmpty()}" class="text-center py-4">
+                <i class="fas fa-file-excel fa-2x text-muted mb-3"></i>
+                <p class="text-muted">No documents uploaded</p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex flex-wrap mt-5 pt-4 border-top">
+                <a th:href="@{/claims/modify/{claimId}(claimId=${claim.id})}" class="btn btn-modify action-btn" th:if="${claim.status == 'PENDING'}">
+                    <i class="fas fa-edit me-2"></i>Modify Claim
+                </a>
+
+                <button class="btn btn-delete action-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" th:if="${claim.status == 'PENDING'}">
+                    <i class="fas fa-trash me-2"></i>Delete Claim
+                </button>
+
+                <a th:href="@{/claims/track(policyholderId=${claim.policyholderId})}" class="btn btn-track action-btn">
+                    <i class="fas fa-list me-2"></i>View All Claims
+                </a>
+
+                <a th:href="@{/claims/submit}" class="btn btn-outline-primary action-btn">
+                    <i class="fas fa-plus me-2"></i>Submit New Claim
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Claim Timeline Card -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="fas fa-history me-2"></i>
+                Claim Status Timeline
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <div class="d-flex justify-content-between">
+                            <strong>Claim Submitted</strong>
+                            <small class="text-muted" th:text="${#temporals.format(claim.submissionDate, 'MMM dd, yyyy HH:mm')}">Jan 16, 2024 14:30</small>
+                        </div>
+                        <p class="mb-0 text-muted">Your claim has been successfully submitted and is awaiting review.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-marker" th:classappend="${claim.status != 'PENDING'} ? '' : 'bg-secondary'"></div>
+                    <div class="timeline-content" th:classappend="${claim.status == 'PENDING'} ? 'text-muted' : ''">
+                        <div class="d-flex justify-content-between">
+                            <strong>Under Review</strong>
+                            <small class="text-muted" th:if="${claim.status != 'PENDING'}">Started: <span th:text="${#temporals.format(claim.submissionDate.plusDays(2), 'MMM dd, yyyy')}"></span></small>
+                            <small class="text-muted" th:if="${claim.status == 'PENDING'}">Pending</small>
+                        </div>
+                        <p class="mb-0 text-muted">Our team is reviewing your medical documents and claim details.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-marker" th:classappend="${claim.status == 'APPROVED' or claim.status == 'REJECTED'} ? '' : 'bg-secondary'"></div>
+                    <div class="timeline-content" th:classappend="${claim.status == 'APPROVED' or claim.status == 'REJECTED'} ? '' : 'text-muted'">
+                        <div class="d-flex justify-content-between">
+                            <strong>Processing</strong>
+                            <small class="text-muted" th:if="${claim.status == 'APPROVED' or claim.status == 'REJECTED'}">Status: <span th:text="${claim.status}"></span></small>
+                            <small class="text-muted" th:if="${claim.status != 'APPROVED' and claim.status != 'REJECTED'}">Pending</small>
+                        </div>
+                        <p class="mb-0 text-muted">Claim approval and payment processing.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade confirmation-modal" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Confirm Deletion
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this claim? This action cannot be undone.</p>
+                <div class="alert alert-warning">
+                    <i class="fas fa-info-circle me-2"></i>
+                    All associated documents will also be permanently deleted.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form th:action="@{/claims/withdraw}" method="post">
+                    <input type="hidden" name="id" th:value="${claim.id}">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-2"></i>Delete Claim
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const successAlert = document.querySelector('.alert-success');
+        if (successAlert) {
+            setTimeout(() => {
+                const bsAlert = new bootstrap.Alert(successAlert);
+                bsAlert.close();
+            }, 5000);
+        }
+        const errorAlert = document.querySelector('.alert-danger');
+        if (errorAlert) {
+            setTimeout(() => {
+                const bsAlert = new bootstrap.Alert(errorAlert);
+                bsAlert.close();
+            }, 5000);
+        }
+    });
+</script>
+</body>
+</html>

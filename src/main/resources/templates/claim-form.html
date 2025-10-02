@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Submit Health Insurance Claim</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #3498db;
+      --secondary-color: #2c3e50;
+      --success-color: #2ecc71;
+      --warning-color: #f39c12;
+      --danger-color: #e74c3c;
+      --light-bg: #f8f9fa;
+    }
+
+    body {
+      background-color: #f5f7fa;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #333;
+    }
+
+    .container {
+      max-width: 800px;
+    }
+
+    .card {
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      padding: 1.5rem;
+      border-bottom: none;
+    }
+
+    .card-body {
+      padding: 2rem;
+    }
+
+    .form-label {
+      font-weight: 600;
+      color: var(--secondary-color);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-control, .form-select {
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      border: 1px solid #ddd;
+      transition: all 0.3s;
+    }
+
+    .form-control:focus, .form-select:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+    }
+
+    textarea.form-control {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .file-upload-area {
+      border: 2px dashed #ddd;
+      border-radius: 8px;
+      padding: 1.5rem;
+      text-align: center;
+      background-color: #f9f9f9;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .file-upload-area:hover {
+      border-color: var(--primary-color);
+      background-color: #f0f8ff;
+    }
+
+    .file-upload-area.dragover {
+      border-color: var(--primary-color);
+      background-color: #e8f4fd;
+    }
+
+    .file-list {
+      margin-top: 1rem;
+    }
+
+    .file-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: white;
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.5rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .file-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .file-icon {
+      color: var(--primary-color);
+      font-size: 1.25rem;
+    }
+
+    .file-name {
+      font-weight: 500;
+    }
+
+    .file-size {
+      color: #6c757d;
+      font-size: 0.875rem;
+    }
+
+    .remove-file {
+      color: var(--danger-color);
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-size: 1.1rem;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .btn-primary:hover {
+      background-color: #2980b9;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .progress {
+      height: 8px;
+      margin-top: 0.5rem;
+      border-radius: 4px;
+    }
+
+    .step-indicator {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    .step-indicator::before {
+      content: '';
+      position: absolute;
+      top: 15px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background-color: #e9ecef;
+      z-index: 1;
+    }
+
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .step-number {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: #e9ecef;
+      color: #6c757d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .step.active .step-number {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .step.completed .step-number {
+      background-color: var(--success-color);
+      color: white;
+    }
+
+    .step-label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #6c757d;
+    }
+
+    .step.active .step-label {
+      color: var(--primary-color);
+    }
+
+    .form-section {
+      display: none;
+    }
+
+    .form-section.active {
+      display: block;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-navigation {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2rem;
+    }
+
+    .alert {
+      border-radius: 8px;
+      border: none;
+    }
+
+    .alert-success {
+      background-color: rgba(46, 204, 113, 0.1);
+      color: var(--success-color);
+    }
+
+    .form-check-input:checked {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+
+    .required::after {
+      content: " *";
+      color: var(--danger-color);
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 2rem;
+      color: #6c757d;
+      font-size: 0.875rem;
+    }
+
+    .currency-input {
+      position: relative;
+    }
+
+    .currency-input .input-group-text {
+      background-color: #f8f9fa;
+      border-right: none;
+    }
+
+    .currency-input .form-control {
+      border-left: none;
+      padding-left: 0;
+    }
+
+    @media (max-width: 576px) {
+      .card-body {
+        padding: 1.5rem;
+      }
+
+      .step-label {
+        font-size: 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container my-5">
+  <div class="card">
+    <div class="card-header text-center">
+      <h1 class="h3 mb-0">Submit Health Insurance Claim</h1>
+      <p class="mb-0 opacity-75">Complete the form below to submit your health insurance claim</p>
+    </div>
+
+    <div class="card-body">
+      <!-- Step Indicator -->
+      <div class="step-indicator">
+        <div class="step active" id="step-1">
+          <div class="step-number">1</div>
+          <div class="step-label">Claim Details</div>
+        </div>
+        <div class="step" id="step-2">
+          <div class="step-number">2</div>
+          <div class="step-label">Upload Documents</div>
+        </div>
+        <div class="step" id="step-3">
+          <div class="step-number">3</div>
+          <div class="step-label">Review & Submit</div>
+        </div>
+      </div>
+
+      <!-- Success Message (Hidden by default) -->
+      <div class="alert alert-success d-none" id="success-message">
+        <i class="fas fa-check-circle me-2"></i>
+        <strong>Success!</strong> Your claim has been submitted successfully. We'll review it and get back to you soon.
+      </div>
+
+      <!-- Claim Form -->
+      <form id="claim-form" method="post" enctype="multipart/form-data">
+        <!-- Step 1: Claim Details -->
+        <div class="form-section active" id="section-1">
+          <h4 class="mb-4">Health Insurance Claim Information</h4>
+
+          <div class="mb-3">
+            <label for="policyholderId" class="form-label required">Policyholder ID</label>
+            <input type="text" class="form-control" id="policyholderId" name="policyholderId" required>
+            <div class="form-text">Enter your policyholder identification number</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Claim Type</label>
+            <div class="form-control bg-light">
+              <i class="fas fa-heartbeat me-2 text-primary"></i>Health Insurance
+            </div>
+            <input type="hidden" id="claimType" name="claimType" value="health">
+          </div>
+
+          <div class="mb-3">
+            <label for="incidentDate" class="form-label required">Treatment Date</label>
+            <input type="date" class="form-control" id="incidentDate" name="incidentDate" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="claimAmount" class="form-label required">Claim Amount ($)</label>
+            <div class="input-group currency-input">
+              <span class="input-group-text">Rs.</span>
+              <input type="number" class="form-control" id="claimAmount" name="claimAmount" min="0" step="0.01" placeholder="0.00" required>
+            </div>
+            <div class="form-text">Enter the total amount you're claiming for this medical treatment</div>
+          </div>
+
+          <div class="mb-4">
+            <label for="description" class="form-label required">Medical Details</label>
+            <textarea class="form-control" id="description" name="description" placeholder="Please provide details about your medical treatment, diagnosis, and any relevant information..." required></textarea>
+            <div class="form-text">Describe your medical condition, treatment received, and any other relevant details</div>
+          </div>
+
+          <div class="form-navigation">
+            <button type="button" class="btn btn-outline-secondary" disabled>Previous</button>
+            <button type="button" class="btn btn-primary" id="next-1">Next</button>
+          </div>
+        </div>
+
+        <!-- Step 2: Upload Documents -->
+        <div class="form-section" id="section-2">
+          <h4 class="mb-4">Medical Documents</h4>
+
+          <div class="mb-3">
+            <label class="form-label">Upload Medical Documents</label>
+            <div class="file-upload-area" id="drop-area">
+              <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+              <h5>Drag & Drop Medical Files Here</h5>
+              <p class="text-muted">or click to browse</p>
+              <p class="small text-muted">Supported formats: PDF, JPEG, PNG (Max 10MB per file)</p>
+              <input type="file" id="file-input" name="documents" multiple accept=".pdf,.jpg,.jpeg,.png" style="display: none;">
+            </div>
+
+            <div class="file-list" id="file-list"></div>
+          </div>
+
+          <div class="form-check mb-4">
+            <input class="form-check-input" type="checkbox" id="termsCheck" required>
+            <label class="form-check-label" for="termsCheck">
+              I confirm that all medical information provided is accurate to the best of my knowledge
+            </label>
+          </div>
+
+          <div class="form-navigation">
+            <button type="button" class="btn btn-outline-secondary" id="prev-2">Previous</button>
+            <button type="button" class="btn btn-primary" id="next-2">Next</button>
+          </div>
+        </div>
+
+        <!-- Step 3: Review & Submit -->
+        <div class="form-section" id="section-3">
+          <h4 class="mb-4">Review Your Health Insurance Claim</h4>
+
+          <div class="card bg-light mb-4">
+            <div class="card-body">
+              <h5 class="card-title">Health Insurance Claim Summary</h5>
+              <table class="table table-borderless">
+                <tr>
+                  <td class="fw-bold" style="width: 40%">Policyholder ID:</td>
+                  <td id="review-policyholderId">-</td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Claim Type:</td>
+                  <td id="review-claimType">Health Insurance</td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Treatment Date:</td>
+                  <td id="review-incidentDate">-</td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Claim Amount:</td>
+                  <td id="review-claimAmount">-</td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Medical Details:</td>
+                  <td id="review-description">-</td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Documents:</td>
+                  <td id="review-documents">-</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+
+          <div class="form-navigation">
+            <button type="button" class="btn btn-outline-secondary" id="prev-3">Previous</button>
+            <button type="submit" class="btn btn-primary" id="submit-btn">
+              <i class="fas fa-paper-plane me-2"></i>Submit Claim
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <div class="footer">
+        <p>Need help? Contact our support team at support@pg91insurance.com</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Step navigation
+    const steps = document.querySelectorAll('.step');
+    const sections = document.querySelectorAll('.form-section');
+    const nextBtn1 = document.getElementById('next-1');
+    const nextBtn2 = document.getElementById('next-2');
+    const prevBtn2 = document.getElementById('prev-2');
+    const prevBtn3 = document.getElementById('prev-3');
+    const submitBtn = document.getElementById('submit-btn');
+    const form = document.getElementById('claim-form');
+    const successMessage = document.getElementById('success-message');
+
+    // File upload elements
+    const dropArea = document.getElementById('drop-area');
+    const fileInput = document.getElementById('file-input');
+    const fileList = document.getElementById('file-list');
+    const uploadedFiles = [];
+
+    // Step navigation functions
+    function goToStep(stepNumber) {
+      // Update steps
+      steps.forEach((step, index) => {
+        if (index < stepNumber - 1) {
+          step.classList.add('completed');
+          step.classList.remove('active');
+        } else if (index === stepNumber - 1) {
+          step.classList.add('active');
+          step.classList.remove('completed');
+        } else {
+          step.classList.remove('active', 'completed');
+        }
+      });
+
+      // Update sections
+      sections.forEach((section, index) => {
+        if (index === stepNumber - 1) {
+          section.classList.add('active');
+        } else {
+          section.classList.remove('active');
+        }
+      });
+    }
+
+    // Event listeners for navigation buttons
+    nextBtn1.addEventListener('click', function() {
+      // Validate step 1
+      const policyholderId = document.getElementById('policyholderId').value;
+      const incidentDate = document.getElementById('incidentDate').value;
+      const claimAmount = document.getElementById('claimAmount').value;
+      const description = document.getElementById('description').value;
+
+      if (!policyholderId || !incidentDate || !claimAmount || !description) {
+        alert('Please fill in all required fields before proceeding.');
+        return;
+      }
+
+      goToStep(2);
+    });
+
+    nextBtn2.addEventListener('click', function() {
+      // Validate step 2
+      const termsCheck = document.getElementById('termsCheck').checked;
+
+      if (!termsCheck) {
+        alert('Please confirm that all information is accurate before proceeding.');
+        return;
+      }
+
+      // Update review section
+      updateReviewSection();
+      goToStep(3);
+    });
+
+    prevBtn2.addEventListener('click', function() {
+      goToStep(1);
+    });
+
+    prevBtn3.addEventListener('click', function() {
+      goToStep(2);
+    });
+
+    // File upload functionality
+    dropArea.addEventListener('click', function() {
+      fileInput.click();
+    });
+
+    fileInput.addEventListener('change', function(e) {
+      handleFiles(e.target.files);
+    });
+
+    // Drag and drop functionality
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      dropArea.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropArea.addEventListener(eventName, highlight, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropArea.addEventListener(eventName, unhighlight, false);
+    });
+
+    function highlight() {
+      dropArea.classList.add('dragover');
+    }
+
+    function unhighlight() {
+      dropArea.classList.remove('dragover');
+    }
+
+    dropArea.addEventListener('drop', function(e) {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      handleFiles(files);
+    });
+
+    function handleFiles(files) {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+
+        // Validate file type and size
+        const validTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+        if (!validTypes.includes(file.type)) {
+          alert(`File "${file.name}" is not a supported format. Please upload PDF, JPEG, or PNG files only.`);
+          continue;
+        }
+
+        if (file.size > 10 * 1024 * 1024) { // 10MB limit
+          alert(`File "${file.name}" exceeds the 10MB size limit.`);
+          continue;
+        }
+
+        // Add to uploaded files
+        uploadedFiles.push(file);
+        displayFile(file);
+      }
+    }
+
+    function displayFile(file) {
+      const fileItem = document.createElement('div');
+      fileItem.className = 'file-item';
+
+      const fileInfo = document.createElement('div');
+      fileInfo.className = 'file-info';
+
+      const fileIcon = document.createElement('i');
+      fileIcon.className = 'file-icon fas fa-file-pdf';
+      if (file.type.startsWith('image/')) {
+        fileIcon.className = 'file-icon fas fa-file-image';
+      }
+
+      const fileName = document.createElement('span');
+      fileName.className = 'file-name';
+      fileName.textContent = file.name;
+
+      const fileSize = document.createElement('span');
+      fileSize.className = 'file-size';
+      fileSize.textContent = formatFileSize(file.size);
+
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'remove-file';
+      removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+      removeBtn.addEventListener('click', function() {
+        const index = uploadedFiles.indexOf(file);
+        if (index > -1) {
+          uploadedFiles.splice(index, 1);
+        }
+        fileItem.remove();
+      });
+
+      fileInfo.appendChild(fileIcon);
+      fileInfo.appendChild(fileName);
+      fileInfo.appendChild(fileSize);
+
+      fileItem.appendChild(fileInfo);
+      fileItem.appendChild(removeBtn);
+
+      fileList.appendChild(fileItem);
+    }
+
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    // Update review section
+    function updateReviewSection() {
+      document.getElementById('review-policyholderId').textContent = document.getElementById('policyholderId').value;
+      document.getElementById('review-incidentDate').textContent = document.getElementById('incidentDate').value;
+      document.getElementById('review-claimAmount').textContent = '$' + parseFloat(document.getElementById('claimAmount').value).toFixed(2);
+      document.getElementById('review-description').textContent = document.getElementById('description').value;
+
+      if (uploadedFiles.length > 0) {
+        document.getElementById('review-documents').textContent = uploadedFiles.length + ' medical document(s) uploaded';
+      } else {
+        document.getElementById('review-documents').textContent = 'No medical documents uploaded';
+      }
+    }
+
+    // Form submission
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      // Show loading state
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Submitting...';
+
+      // Simulate API call
+      setTimeout(function() {
+        // Hide form and show success message
+        form.style.display = 'none';
+        successMessage.classList.remove('d-none');
+
+        // Reset form after 5 seconds (for demo purposes)
+        setTimeout(function() {
+          form.reset();
+          uploadedFiles.length = 0;
+          fileList.innerHTML = '';
+          form.style.display = 'block';
+          successMessage.classList.add('d-none');
+          goToStep(1);
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Submit Claim';
+        }, 5000);
+      }, 2000);
+    });
+
+    // Set today's date as default for incident date
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('incidentDate').value = today;
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modify Claim - PG91 Insurance</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div class="container my-5">
+    <div class="card">
+        <div class="card-header text-center">
+            <h1 class="h3 mb-0">Modify Health Insurance Claim</h1>
+            <p class="mb-0 opacity-75">Update your claim details and documents</p>
+        </div>
+        <div class="card-body">
+            <!-- Error Message -->
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <strong>Error!</strong> <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <form th:action="@{/claims/modify}" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="id" th:value="${claim.id}">
+
+                <div class="mb-3">
+                    <label for="description" class="form-label required">Medical Details</label>
+                    <textarea class="form-control" id="description" name="description" rows="4" th:text="${claim.description}" required></textarea>
+                    <div class="form-text">Update the medical details for your claim</div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Upload Additional Documents</label>
+                    <div class="file-upload-area border-dashed p-4 text-center rounded">
+                        <i class="fas fa-cloud-upload-alt fa-2x text-muted mb-3"></i>
+                        <p class="mb-2">Drag & drop additional medical files here</p>
+                        <p class="small text-muted mb-0">Supported formats: PDF, JPEG, PNG (Max 10MB per file)</p>
+                        <input type="file" name="documents" multiple accept=".pdf,.jpg,.jpeg,.png" class="d-none" id="file-input">
+                        <button type="button" class="btn btn-outline-primary mt-2" onclick="document.getElementById('file-input').click()">
+                            Browse Files
+                        </button>
+                    </div>
+                </div>
+
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Note: Modifying your claim will reset its status to "Pending" for review.
+                </div>
+
+                <div class="form-navigation">
+                    <a th:href="@{/claims/submission/{claimId}(claimId=${claim.id})}" class="btn btn-outline-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Update Claim
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.getElementById('file-input');
+        const uploadArea = fileInput.closest('.file-upload-area');
+
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.style.borderColor = '#3498db';
+            this.style.backgroundColor = '#f0f8ff';
+        });
+
+        uploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.style.borderColor = '';
+            this.style.backgroundColor = '';
+        });
+
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.style.borderColor = '';
+            this.style.backgroundColor = '';
+            fileInput.files = e.dataTransfer.files;
+        });
+
+        const errorAlert = document.querySelector('.alert-danger');
+        if (errorAlert) {
+            setTimeout(() => {
+                const bsAlert = new bootstrap.Alert(errorAlert);
+                bsAlert.close();
+            }, 5000);
+        }
+    });
+</script>
+</body>
+</html>
