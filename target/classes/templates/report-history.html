@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Report History</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header>
+    <h1>Medical Report System</h1>
+</header>
+
+<nav>
+    <a th:href="@{/reports}">📋 View Reports</a>
+    <a th:href="@{/upload}">⬆ Upload Report</a>
+    <a th:href="@{/logout}">🚪 Logout</a>
+</nav>
+
+<main class="container">
+    <h2>Report History</h2>
+
+    <p th:if="${patientName}">
+        Showing history for patient: <strong th:text="${patientName}">John Doe</strong>
+    </p>
+
+    <table border="1">
+        <thead>
+        <tr>
+            <th>Report ID</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>File</th>
+            <th>Uploaded On</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="r : ${reports}">
+            <td th:text="${r.id}">1</td>
+            <td th:text="${r.reportType}">Blood Test</td>
+            <td th:text="${r.description}">desc</td>
+            <td>
+                <a th:if="${r.fileName}" th:href="@{'/download/' + ${r.id}}" th:text="${r.fileName}">file.pdf</a>
+            </td>
+            <td th:text="${#temporals.format(r.createdAt, 'yyyy-MM-dd HH:mm')}">2025-10-01</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a th:href="@{/reports}" class="btn">⬅ Back to Reports</a>
+</main>
+
+</body>
+</html>

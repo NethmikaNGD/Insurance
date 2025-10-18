@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Page</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header>
+    <h1>✅ Medical Report System Test Page</h1>
+</header>
+
+<nav>
+    <a th:href="@{/reports}">📋 View Reports</a>
+    <a th:href="@{/upload}">⬆ Upload Report</a>
+    <a th:href="@{/history/John}">🕑 View John’s History</a>
+    <a th:href="@{/logout}">🚪 Logout</a>
+</nav>
+
+<main class="container">
+    <h2>Thymeleaf Test</h2>
+    <p>This page is used to verify that the system is working.</p>
+
+    <h3>Dynamic Variables</h3>
+    <ul>
+        <li>Message: <span th:text="${message}">Default test message</span></li>
+        <li>Server Time: <span th:text="${serverTime}">2025-10-01</span></li>
+        <li>Total Reports: <span th:text="${reportCount}">0</span></li>
+    </ul>
+
+    <h3>Sample Report List</h3>
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Patient</th>
+            <th>Type</th>
+        </tr>
+        <tr th:each="r : ${reports}">
+            <td th:text="${r.id}">1</td>
+            <td th:text="${r.patientName}">John Doe</td>
+            <td th:text="${r.reportType}">X-Ray</td>
+        </tr>
+    </table>
+</main>
+
+</body>
+</html>
