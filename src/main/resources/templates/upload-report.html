@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Medical Report</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0; padding: 0;
+            background: #f8f9fa;
+        }
+        header {
+            background: #007bff;
+            color: #fff;
+            padding: 1rem;
+            text-align: center;
+        }
+        nav {
+            background: #343a40;
+            padding: 0.5rem;
+            text-align: center;
+        }
+        nav a {
+            color: #fff;
+            margin: 0 10px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        nav a:hover { text-decoration: underline; }
+        main.container {
+            padding: 2rem;
+            max-width: 700px;
+            margin: auto;
+            background: white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        h2 { color: #333; margin-bottom: 1rem; }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 0.3rem;
+        }
+        input[type="text"], textarea, input[type="file"] {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        textarea { resize: vertical; }
+        .btn {
+            display: inline-block;
+            padding: 0.6rem 1.2rem;
+            background: #28a745;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+        }
+        .btn:hover { background: #218838; }
+        .btn-secondary {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .btn-secondary:hover { background: #5a6268; }
+        .success-message {
+            margin: 1rem 0;
+            padding: 0.75rem;
+            border-radius: 5px;
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>📑 Medical Report System</h1>
+</header>
+
+<nav>
+    <a th:href="@{/reports}">📋 View Reports</a>
+    <a th:href="@{/upload}">⬆ Upload Report</a>
+    <a th:href="@{/logout}">🚪 Logout</a>
+</nav>
+
+<main class="container">
+    <h2>Upload Medical Report</h2>
+
+    <!-- ✅ Success message -->
+    <p th:if="${message}" th:text="${message}" class="success-message"></p>
+
+    <form th:action="@{/upload}" method="post" enctype="multipart/form-data" th:object="${report}">
+        <div class="form-group">
+            <label for="patientName">Patient Name</label>
+            <input type="text" id="patientName" th:field="*{patientName}" placeholder="Enter patient's full name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="reportType">Report Type</label>
+            <input type="text" id="reportType" th:field="*{reportType}" placeholder="e.g., Blood Test, X-Ray" required>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" th:field="*{description}" placeholder="Enter report details" rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="file">Upload File</label>
+            <input type="file" id="file" name="file" accept=".pdf,.jpg,.png,.doc,.docx" required>
+        </div>
+
+        <button type="submit" class="btn">⬆ Upload Report</button>
+    </form>
+
+    <a th:href="@{/reports}" class="btn-secondary">← Back to Reports</a>
+</main>
+</body>
+</html>
