@@ -15,7 +15,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // disable for dev; enable for production
+                .csrf(csrf -> csrf.disable()) // Disable for dev; enable for production
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/css/**",
@@ -26,13 +26,19 @@ public class SecurityConfig {
                                 "/reports",
                                 "/upload",
                                 "/login",
-                                "/test"
+                                "/test",
+                                "/delete/**",
+                                "/edit/**",
+                                "/update/**", // Add update endpoints
+                                "/download/**",
+                                "/history/**", // Add history endpoints
+                                "/update-success"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/reports", true)
+                        .defaultSuccessUrl("/reports", false)
                         .permitAll()
                 )
                 .logout(logout -> logout
@@ -45,7 +51,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // for quick testing: in-memory user "admin" / "password"
     @Bean
     public InMemoryUserDetailsManager userDetailsService(PasswordEncoder encoder) {
         var user = User.withUsername("admin")
