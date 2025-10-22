@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,18 +11,49 @@
     <link rel="stylesheet" th:href="@{/css/feedbackFooter.css}">
 </head>
 <body>
+
 <!-- Navigation -->
 <nav>
     <h2 class="navHeader"><span class="highlight">HealthSure Insurance Lanka</span></h2>
     <ul class="navLinks">
-        <li><a th:href="@{/home}">Home</a></li>
+        <li><a th:href="@{/}">Home</a></li>
         <li><a href="#">About</a></li>
         <li><a href="#">Contact</a></li>
     </ul>
     <div class="getInsurance">
-        <a th:href="@{/plans}" class="btnInsurance">View All Plans</a>
+        <a th:href="@{/dashboard}" sec:authorize="hasRole('ADMIN')">
+            <button class="btnInsurance">Dashboard</button>
+        </a>
+    </div>
+    <div class="getInsurance" style="display:flex; align-items:center; gap:10px;">
+        <!-- Dashboard only for ADMIN -->
+        <a th:href="@{/dashboard}" sec:authorize="hasRole('ADMIN')">
+            <button class="btnInsurance">Dashboard</button>
+        </a>
+
+        <!-- Always visible CTA -->
+        <a th:href="@{/plans}">
+            <button class="btnInsurance">Get Insurance</button>
+        </a>
+
+        <!-- Login for anonymous users -->
+        <a th:href="@{/login}" sec:authorize="isAnonymous()">
+            <button class="btnInsurance">Login</button>
+        </a>
+
+        <!-- Profile avatar for authenticated users -->
+        <a th:href="@{/profile}" sec:authorize="isAuthenticated()" title="Profile"
+           style="display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:50%; background:#eee; color:#333; text-decoration:none; font-weight:600;">
+            <span th:text="${#authentication?.name?.substring(0,1).toUpperCase()}">U</span>
+        </a>
+
+        <!-- Logout for authenticated users (optional) -->
+        <!--        <form th:action="@{/logout}" method="post" sec:authorize="isAuthenticated()" style="margin:0;">-->
+        <!--            <button type="submit" class="btnInsurance">Logout</button>-->
+        <!--        </form>-->
     </div>
 </nav>
+
 
 <!-- Breadcrumb Navigation (Your Style) -->
 <div class="plan-breadcrumb">
@@ -112,7 +144,8 @@
                 <div class="priceContainer">
                     <!-- Pricing Header -->
                     <h1 class="title-of-plan">Choose your plan</h1>
-                    <p class="descript" th:text="${plan.category + ' Insurance'}">Select a payment plan that fits your needs.</p>
+                    <p class="descript" th:text="${plan.category + ' Insurance'}">Select a payment plan that fits your
+                        needs.</p>
 
                     <!-- Enhanced Pricing Display -->
                     <div class="pricing-highlight">
@@ -147,14 +180,9 @@
 
                     <!-- Purchase Actions -->
                     <div class="purchase-actions">
-                        <form th:action="@{/purchase/{id}(id=${plan.id})}" method="post" class="purchase-form">
-                            <!-- kept same classes but added purchase-btn class (non-thymeleaf change) -->
-                            <button type="submit" class="getbuyBtn">
-                                <span>Get Insurance Now</span>
-                                <span class="btn-icon">→</span>
-                            </button>
-                        </form>
-
+                        <a class="getbuyBtn" th:href="@{/payment(planId=${plan.id})}" sec:authorize="isAuthenticated()">
+                            <i class="fas fa-shopping-cart"></i> Buy Now
+                        </a>
                         <a th:href="@{/plans}" class="back-btn">← Back to All Plans</a>
                     </div>
 
@@ -202,7 +230,8 @@
                 </div>
                 <div class="form-group">
                     <label for="feedbackComment">Your Feedback</label>
-                    <textarea id="feedbackComment" name="comment" placeholder="Tell us about your experience" required></textarea>
+                    <textarea id="feedbackComment" name="comment" placeholder="Tell us about your experience"
+                              required></textarea>
                 </div>
                 <button type="submit" class="feedback-submit-btn">Submit Feedback</button>
             </form>
@@ -214,7 +243,8 @@
                     <span class="review-name">John Doe</span>
                     <span class="review-rating">★★★★★</span>
                 </div>
-                <p class="review-comment">Excellent service! The plan was easy to understand and the support team was very responsive.</p>
+                <p class="review-comment">Excellent service! The plan was easy to understand and the support team was
+                    very responsive.</p>
                 <span class="review-date">September 20, 2025</span>
             </div>
             <div class="review-item">
@@ -272,7 +302,7 @@
 
 <!-- Enhanced JavaScript (Your Functionality) -->
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const priceAmountEl = document.getElementById('priceAmount');
         const pricePeriodEl = document.getElementById('pricePeriod');
         const priceDurationEl = document.getElementById('priceDuration');
@@ -292,7 +322,7 @@
                     let periodText = '';
                     let durationText = '';
 
-                    switch(duration) {
+                    switch (duration) {
                         case '1month':
                             periodText = '/month';
                             durationText = 'Monthly Payment';
@@ -342,7 +372,7 @@
             if (initialOption) updatePriceDisplay(initialOption.value, initialPrice);
 
             // Handle duration change
-            insuranceSelect.addEventListener('change', function() {
+            insuranceSelect.addEventListener('change', function () {
                 const selectedOption = this.options[this.selectedIndex];
                 const newPrice = selectedOption.getAttribute('data-price');
                 const duration = selectedOption.value;
@@ -352,10 +382,10 @@
 
             // Add hover effects to benefits
             document.querySelectorAll('.benefit-item').forEach(item => {
-                item.addEventListener('mouseenter', function() {
+                item.addEventListener('mouseenter', function () {
                     this.style.transform = 'translateX(5px)';
                 });
-                item.addEventListener('mouseleave', function() {
+                item.addEventListener('mouseleave', function () {
                     this.style.transform = 'translateX(0)';
                 });
             });
@@ -363,7 +393,7 @@
             // Add click animation to purchase button (prefers purchase-btn, fallback to btnInsurance)
             const purchaseBtn = document.querySelector('.purchase-btn') || document.querySelector('.btnInsurance');
             if (purchaseBtn) {
-                purchaseBtn.addEventListener('click', function(e) {
+                purchaseBtn.addEventListener('click', function (e) {
                     // small scale animation
                     this.style.transform = 'scale(0.98)';
                     setTimeout(() => {
@@ -375,7 +405,7 @@
             // Add click animation to feedback submit button
             const feedbackSubmitBtn = document.querySelector('.feedback-submit-btn');
             if (feedbackSubmitBtn) {
-                feedbackSubmitBtn.addEventListener('click', function(e) {
+                feedbackSubmitBtn.addEventListener('click', function (e) {
                     this.style.transform = 'scale(0.98)';
                     setTimeout(() => {
                         this.style.transform = 'scale(1)';
@@ -385,10 +415,10 @@
 
             // Add hover effects to feedback reviews
             document.querySelectorAll('.review-item').forEach(item => {
-                item.addEventListener('mouseenter', function() {
+                item.addEventListener('mouseenter', function () {
                     this.style.transform = 'translateY(-5px)';
                 });
-                item.addEventListener('mouseleave', function() {
+                item.addEventListener('mouseleave', function () {
                     this.style.transform = 'translateY(0)';
                 });
             });

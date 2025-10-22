@@ -1,6 +1,6 @@
-package com.pg91.repo;
+package com.pg91.insurance.repo;
 
-import com.pg91.entity.InsurancePlan;
+import com.pg91.insurance.entity.InsurancePlan;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

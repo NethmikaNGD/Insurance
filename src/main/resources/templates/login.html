@@ -1,56 +1,68 @@
-
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - HealthSure Lanka</title>
+    <link rel="stylesheet" th:href="@{/css/indexcss.css}">
     <link rel="stylesheet" th:href="@{/css/nav.css}">
-    <link rel="stylesheet" th:href="@{/css/auth.css}">
-    <title>Login - HealthSure Insurance Lanka</title>
-    <link rel="icon" href="img/img.png">
+
     <style>
-        .brand { font-size: 20px; font-weight: 800; }
+        .login-container {
+            text-align: center;
+            padding: 50px;
+            max-width: 400px;
+            margin: 50px auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group input {
+            width: 95%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .alert-error {
+            color: #D8000C;
+            background-color: #FFD2D2;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
     </style>
+
 </head>
 <body>
-<nav>
-    <h2 class="navHeader"><span class="highlight">HealthSure Insurance Lanka</span></h2>
-    <ul class="navLinks">
-        <!-- Uncomment these if needed
-        <li><a href="index.html">Home</a></li>
-        <li><a href="#">About</a></li>
-        <li><a href="#">Contact</a></li>
-        -->
-    </ul>
-    <div class="getInsurance">
-        <a  th:href="@{/register}"><button class="btnInsurance">Create Account</button></a>
+<nav th:replace="~{home :: nav}"></nav>
+
+<div class="login-container" style="text-align: center; padding: 50px;">
+    <h2>Login to Your Account</h2>
+
+    <div th:if="${param.error}" class="alert-error">
+        Invalid email or password.
     </div>
-</nav>
+    <div th:if="${param.logout}" class="alert-success">
+        You have been logged out.
+    </div>
 
-<main class="auth-wrapper">
-    <div class="auth-illustration"></div>
-    <section class="auth-panel">
-        <div class="auth-card">
-            <h1 class="auth-title">Welcome back</h1>
-            <p class="auth-subtitle">Log in to manage your <span class="highlight">Insurance</span> plans.</p>
-
-            <form class="auth-form" onsubmit="event.preventDefault(); window.location.href='InsurancePlanPage.html'">
-                <div>
-                    <label for="email">Email</label>
-                    <input type="email" id="email" placeholder="you@example.com" required>
-                </div>
-                <div>
-                    <label for="password">Password</label>
-                    <input type="password" id="password" placeholder="Your password" required>
-                </div>
-                <div class="auth-actions">
-                    <button class="auth-btn" type="submit">Log in</button>
-                    <a class="auth-link" th:href="@{/register}">No account? Register</a>
-                </div>
-                <p class="auth-note">Demo only. Submitting will redirect you to plans.</p>
-            </form>
+    <form th:action="@{/login}" method="post" style="max-width: 400px; margin: auto;">
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required autofocus>
         </div>
-    </section>
-</main>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit" class="btnactive">Log In</button>
+    </form>
+    <p>Don't have an account? <a th:href="@{/user/register}">Register here</a></p>
+</div>
+
 </body>
 </html>

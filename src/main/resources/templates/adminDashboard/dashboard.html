@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -15,6 +15,7 @@
     <nav>
         <a th:href="@{/dashboard}" class="active">Dashboard</a>
         <a th:href="@{/viewPlans}">Insurance Plans</a>
+        <a th:href="@{/auditLogs}">Audit Logs</a>
         <a href="#">Users</a>
         <a href="#">Claims</a>
         <a href="#">Reports</a>
@@ -28,7 +29,10 @@
         <h1>Admin Dashboard</h1>
         <div class="user">
             <span class="username">Admin</span>
-            <img src="https://via.placeholder.com/32" alt="Admin" class="avatar">
+            <a th:href="@{/profile}" sec:authorize="isAuthenticated()" title="Profile"
+               style="display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:50%; background:#eee; color:#333; text-decoration:none; font-weight:600;">
+                <span th:text="${#authentication?.name?.substring(0,1).toUpperCase()}">U</span>
+            </a>
         </div>
     </header>
 

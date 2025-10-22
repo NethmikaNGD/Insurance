@@ -44,7 +44,25 @@ CREATE TABLE Insurance_Plans (
     CONSTRAINT CHK_Valid_Dates CHECK (valid_to IS NULL OR valid_to > valid_from)
 );
 
--- 3. USER POLICIES (UC-02)
+-- 3. PAYMENT TABLE (UC-02)
+CREATE TABLE Payment_Table (
+                               pay_id             INT IDENTITY(1,1) PRIMARY KEY,
+                               app_user_id        INT NOT NULL,
+                               plan_id            INT NOT NULL,
+                               policy_id          INT NULL,
+                               card_holder_name   NVARCHAR(100) NOT NULL,
+                               card_no            NVARCHAR(20) NOT NULL,
+                               valid_date         DATE NOT NULL,
+                               security_code      SMALLINT NOT NULL,
+                               amount_paid        DECIMAL(10,2) NOT NULL,
+                               payment_date       DATETIME DEFAULT GETDATE(),
+                               updated_at         DATETIME DEFAULT GETDATE(),
+                               FOREIGN KEY (app_user_id) REFERENCES AppUsers(app_user_id),
+                               FOREIGN KEY (plan_id) REFERENCES Insurance_Plans(plan_id),
+                               FOREIGN KEY (policy_id) REFERENCES User_Policies(policy_id)
+);
+
+-- 4. USER POLICIES (UC-02)
 CREATE TABLE User_Policies (
                                policy_id  INT IDENTITY(1,1) PRIMARY KEY,
                                app_user_id INT NOT NULL,
@@ -56,7 +74,7 @@ CREATE TABLE User_Policies (
                                FOREIGN KEY (plan_id) REFERENCES Insurance_Plans(plan_id)
 );
 
--- 4. CLAIMS (UC-03)
+-- 5. CLAIMS (UC-03)
 CREATE TABLE Claims (
                         claim_id         INT IDENTITY(1,1) PRIMARY KEY,
                         policy_id        INT NOT NULL,
@@ -70,7 +88,7 @@ CREATE TABLE Claims (
     -- Removed app_user_id as it’s redundant (can be derived from User_Policies)
 );
 
--- 5. CLAIM DOCUMENTS
+-- 6. CLAIM DOCUMENTS
 CREATE TABLE Claim_Documents (
                                  doc_id      INT IDENTITY(1,1) PRIMARY KEY,
                                  claim_id    INT NOT NULL,
@@ -81,7 +99,7 @@ CREATE TABLE Claim_Documents (
                                  FOREIGN KEY (uploaded_by) REFERENCES AppUsers(app_user_id)
 );
 
--- 6. MEDICAL REPORTS (UC-05)
+-- 7. MEDICAL REPORTS (UC-05)
 CREATE TABLE Medical_Reports (
                                  report_id   INT IDENTITY(1,1) PRIMARY KEY,
                                  claim_id    INT NOT NULL,
@@ -92,7 +110,7 @@ CREATE TABLE Medical_Reports (
                                  FOREIGN KEY (doctor_id) REFERENCES AppUsers(app_user_id)
 );
 
--- 7. CLAIM STATUS HISTORY (audit trail)
+-- 8. CLAIM STATUS HISTORY (audit trail)
 CREATE TABLE Claim_Status_History (
                                       history_id  INT IDENTITY(1,1) PRIMARY KEY,
                                       claim_id    INT NOT NULL,
@@ -104,7 +122,7 @@ CREATE TABLE Claim_Status_History (
                                       FOREIGN KEY (changed_by) REFERENCES AppUsers(app_user_id)
 );
 
--- 8. FEEDBACK (UC-06)
+-- 9. FEEDBACK (UC-06)
 CREATE TABLE Feedback (
                           feedback_id INT IDENTITY(1,1) PRIMARY KEY,
                           app_user_id INT NOT NULL,
@@ -121,7 +139,7 @@ CREATE TABLE Feedback (
                               )
 );
 
--- 9. ADMIN ACTION LOG (UC-04)
+-- 10. ADMIN ACTION LOG (UC-04)
 CREATE TABLE Admin_Actions (
                                action_id      INT IDENTITY(1,1) PRIMARY KEY,
                                admin_id       INT NOT NULL,
@@ -133,6 +151,8 @@ CREATE TABLE Admin_Actions (
 );
 
 -- Add indexes for performance
+CREATE NONCLUSTERED INDEX IX_Payment_Table_app_user_id ON Payment_Table(app_user_id);
+CREATE NONCLUSTERED INDEX IX_Payment_Table_plan_id ON Payment_Table(plan_id);
 CREATE NONCLUSTERED INDEX IX_User_Policies_app_user_id ON User_Policies(app_user_id);
 CREATE NONCLUSTERED INDEX IX_Claims_policy_id ON Claims(policy_id);
 CREATE NONCLUSTERED INDEX IX_Claim_Documents_claim_id ON Claim_Documents(claim_id);

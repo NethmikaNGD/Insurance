@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,8 +19,63 @@
         <li><a href="#">About</a></li>
         <li><a href="#">Contact</a></li>
     </ul>
-    <div class="getInsurance">
-        <a th:href="@{/plans}"> <button class="btnInsurance">Get Insurance</button></a>
+
+    <div class="getInsurance" style="display:flex; align-items:center; gap:10px;">
+        <!-- Dashboard only for ADMIN -->
+        <a th:href="@{/dashboard}" sec:authorize="hasRole('ADMIN')">
+            <button class="btnInsurance">Dashboard</button>
+        </a>
+
+        <!-- Always visible CTA -->
+        <a th:href="@{/plans}">
+            <button class="btnInsurance">Get Insurance</button>
+        </a>
+
+        <!-- Login for anonymous users -->
+        <a th:href="@{/login}" sec:authorize="isAnonymous()">
+            <button class="btnInsurance">Login</button>
+        </a>
+
+        <!-- Profile dropdown for authenticated users -->
+        <div class="profile-dropdown" sec:authorize="isAuthenticated()"
+             style="position:relative; display:inline-block;">
+            <button class="profile-avatar" onclick="toggleDropdown()"
+                    style="display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:50%; background:#eee; color:#333; text-decoration:none; font-weight:600; border:none; cursor:pointer;">
+                <span th:text="${#authentication?.name?.substring(0,1).toUpperCase()}">U</span>
+            </button>
+
+            <div id="profileDropdown" class="dropdown-content"
+                 style="display:none; position:absolute; right:0; top:100%; background:white; min-width:200px; box-shadow:0 4px 6px rgba(0,0,0,0.1); border-radius:8px; z-index:1000; margin-top:5px;">
+                <div class="dropdown-header"
+                     style="padding:12px 16px; border-bottom:1px solid #eee; background:#f8f9fa;">
+                    <div style="font-weight:600; color:#333;" th:text="${session.CURRENT_USER_NAME}">User Name</div>
+                    <div style="font-size:12px; color:#666;" th:text="${session.CURRENT_USER_EMAIL}">user@email.com
+                    </div>
+                </div>
+                <a th:href="@{/profile}"
+                   style="display:block; padding:12px 16px; color:#333; text-decoration:none; border-bottom:1px solid #f0f0f0;">
+                    <span style="margin-right:8px;">👤</span> Profile
+                </a>
+                <a th:href="@{/dashboard}" sec:authorize="hasRole('ADMIN')"
+                   style="display:block; padding:12px 16px; color:#333; text-decoration:none; border-bottom:1px solid #f0f0f0;">
+                    <span style="margin-right:8px;">⚙️</span> Dashboard
+                </a>
+                <a href="#"
+                   style="display:block; padding:12px 16px; color:#333; text-decoration:none; border-bottom:1px solid #f0f0f0;">
+                    <span style="margin-right:8px;">📊</span> My Policies
+                </a>
+                <a href="#"
+                   style="display:block; padding:12px 16px; color:#333; text-decoration:none; border-bottom:1px solid #f0f0f0;">
+                    <span style="margin-right:8px;">💬</span> Support
+                </a>
+                <form th:action="@{/logout}" method="post" style="margin:0;">
+                    <button type="submit"
+                            style="width:100%; padding:12px 16px; background:none; border:none; color:#dc3545; text-align:left; cursor:pointer; border-top:1px solid #f0f0f0;">
+                        <span style="margin-right:8px;">🚪</span> Logout
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
 </nav>
 
@@ -32,7 +88,9 @@
             </h2>
         </div>
         <div class="sec">
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem cupiditate alias quod assumenda nobis natus cumque iste totam. Molestias, aspernatur perferendis est provident porro quo illo quia non dignissimos autem.</p>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem cupiditate alias quod assumenda nobis
+                natus cumque iste totam. Molestias, aspernatur perferendis est provident porro quo illo quia non
+                dignissimos autem.</p>
         </div>
         <div class="buttonSection">
             <a th:href="@{/plans}" class="btnactive">Get Insurance</a>
@@ -43,7 +101,8 @@
     <!-- Fixed Hero Images Section -->
     <section class="HeroImages">
         <!-- Hero banner image -->
-        <img th:src="@{/css/image/img.png}" src="style/image/img.png" alt="HealthSure Insurance Banner" class="heroImage">
+        <img th:src="@{/css/image/img.png}" src="style/image/img.png" alt="HealthSure Insurance Banner"
+             class="heroImage">
 
     </section>
 </header>
@@ -82,7 +141,8 @@
         <div class="card">
             <img th:src="@{/css/image/hh.jpg}" src="style/image/hh.jpg" alt="Life Insurance" class="testImage">
             <p class="topic">Life Insurance</p>
-            <p class="sectopic">Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem cupiditate alias quod assumenda nobis natus cumque iste totam.</p>
+            <p class="sectopic">Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem cupiditate alias quod
+                assumenda nobis natus cumque iste totam.</p>
         </div>
 
         <div class="card">
@@ -94,19 +154,22 @@
         <div class="card">
             <img th:src="@{/css/image/hh.jpg}" src="style/image/hh.jpg" alt="Vehicle Insurance" class="testImage">
             <p class="topic">Vehicle Insurance</p>
-            <p class="sectopic">Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem cupiditate alias quod assumenda nobis natus cumque iste totam.</p>
+            <p class="sectopic">Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem cupiditate alias quod
+                assumenda nobis natus cumque iste totam.</p>
         </div>
 
         <div class="card">
             <img th:src="@{/css/image/hh.jpg}" src="style/image/hh.jpg" alt="Travel Insurance" class="testImage">
             <p class="topic">Travel Insurance</p>
-            <p class="sectopic">Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem cupiditate alias quod assumenda nobis natus cumque iste totam.</p>
+            <p class="sectopic">Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem cupiditate alias quod
+                assumenda nobis natus cumque iste totam.</p>
         </div>
 
         <div class="card">
             <img th:src="@{/css/image/hh.jpg}" src="style/image/hh.jpg" alt="Custom Insurance" class="testImage">
             <p class="topic">Customize Your Insurance</p>
-            <p class="sectopic">Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem cupiditate alias quod assumenda nobis natus cumque iste totam.</p>
+            <p class="sectopic">Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem cupiditate alias quod
+                assumenda nobis natus cumque iste totam.</p>
         </div>
     </div>
 </section>
@@ -144,7 +207,7 @@
     document.addEventListener("DOMContentLoaded", () => {
         const counters = document.querySelectorAll(".count");
 
-        const options = { threshold: 0.5 }; // Trigger when 50% of section is visible
+        const options = {threshold: 0.5}; // Trigger when 50% of section is visible
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -171,6 +234,28 @@
         const notifyBar = document.querySelector(".notifyBar");
         if (notifyBar) {
             observer.observe(notifyBar);
+        }
+    });
+
+    // Profile dropdown functionality
+    function toggleDropdown() {
+        const dropdown = document.getElementById('profileDropdown');
+        if (dropdown.style.display === 'none' || dropdown.style.display === '') {
+            dropdown.style.display = 'block';
+        } else {
+            dropdown.style.display = 'none';
+        }
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function (event) {
+        const dropdown = document.getElementById('profileDropdown');
+        const profileButton = document.querySelector('.profile-avatar');
+
+        if (dropdown && profileButton) {
+            if (!profileButton.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.style.display = 'none';
+            }
         }
     });
 </script>

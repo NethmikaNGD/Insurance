@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -28,8 +28,37 @@
     <header class="topbar">
         <h1>Insurance Plan Create</h1>
         <div class="user">
-            <span class="role">Staff,</span>
-            <span class="username">Dineth</span>
+            <span class="role" sec:authorize="hasRole('ADMIN')">Admin,</span>
+            <span class="username" th:text="${session.CURRENT_USER_NAME}">User</span>
+
+            <!-- Profile dropdown for admin -->
+            <div class="profile-dropdown" style="position:relative; display:inline-block; margin-left:15px;">
+                <button class="profile-avatar" onclick="toggleDropdown()"
+                        style="display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:50%; background:#007bff; color:white; text-decoration:none; font-weight:600; border:none; cursor:pointer; font-size:14px;">
+                    <span th:text="${session.CURRENT_USER_NAME?.substring(0,1).toUpperCase()}">U</span>
+                </button>
+
+                <div id="profileDropdown" class="dropdown-content" style="display:none; position:absolute; right:0; top:100%; background:white; min-width:180px; box-shadow:0 4px 6px rgba(0,0,0,0.1); border-radius:8px; z-index:1000; margin-top:5px;">
+                    <div class="dropdown-header" style="padding:10px 12px; border-bottom:1px solid #eee; background:#f8f9fa;">
+                        <div style="font-weight:600; color:#333; font-size:13px;" th:text="${session.CURRENT_USER_NAME}">User Name</div>
+                        <div style="font-size:11px; color:#666;" th:text="${session.CURRENT_USER_EMAIL}">user@email.com</div>
+                    </div>
+                    <a th:href="@{/profile}" style="display:block; padding:10px 12px; color:#333; text-decoration:none; border-bottom:1px solid #f0f0f0; font-size:13px;">
+                        <span style="margin-right:6px;"></span> Profile
+                    </a>
+                    <a th:href="@{/dashboard}" style="display:block; padding:10px 12px; color:#333; text-decoration:none; border-bottom:1px solid #f0f0f0; font-size:13px;">
+                        <span style="margin-right:6px;"></span> Dashboard
+                    </a>
+                    <a th:href="@{/viewPlans}" style="display:block; padding:10px 12px; color:#333; text-decoration:none; border-bottom:1px solid #f0f0f0; font-size:13px;">
+                        <span style="margin-right:6px;"></span> View Plans
+                    </a>
+                    <form th:action="@{/logout}" method="post" style="margin:0;">
+                        <button type="submit" style="width:100%; padding:10px 12px; background:none; border:none; color:#dc3545; text-align:left; cursor:pointer; border-top:1px solid #f0f0f0; font-size:13px;">
+                            <span style="margin-right:6px;"></span> Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -39,14 +68,14 @@
             <div class="card-head">
                 <h2>Create Plan</h2>
                 <div class="who">
-                    Dineth<br><small>ID: 21</small>
+                    <span th:text="${session.CURRENT_USER_NAME}">User</span><br>
+                    <small>ID: <span th:text="${session.CURRENT_USER_ID}">0</span></small>
                 </div>
             </div>
             <form class="plan-form" action="/createPlan" method="post" enctype="multipart/form-data" th:object="${insurancePlanForm}">
                 <label for="userId">Staff User ID</label>
                 <div>
                     <input id="userId" name="userId" type="number" th:field="*{userId}" placeholder="Enter your user ID" required />
-                    <div class="hint">This links the plan to the staff member.</div>
                 </div>
 
                 <label for="planName">Plan Title</label>

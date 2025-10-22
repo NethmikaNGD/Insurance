@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Insurance Plans</title>
 
     <!-- Link the new stylesheet -->
@@ -10,9 +11,10 @@
     <link rel="stylesheet" th:href="@{/css/nav.css}">
     <link rel="stylesheet" th:href="@{/css/plancss.css}">
     <link rel="stylesheet" th:href="@{/css/feedbackFooter.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-<!-- ===== Navigation ===== -->
+<!-- Navigation -->
 <nav>
     <h2 class="navHeader"><span class="highlight">HealthSure Insurance Lanka</span></h2>
     <ul class="navLinks">
@@ -21,22 +23,52 @@
         <li><a href="#">Contact</a></li>
     </ul>
     <div class="getInsurance">
-        <button class="btnInsurance">Get Insurance</button>
+        <a th:href="@{/dashboard}" sec:authorize="hasRole('ADMIN')">
+            <button class="btnInsurance">Dashboard</button>
+        </a>
+    </div>
+    <div class="getInsurance" style="display:flex; align-items:center; gap:10px;">
+        <!-- Dashboard only for ADMIN -->
+        <a th:href="@{/dashboard}" sec:authorize="hasRole('ADMIN')">
+            <button class="btnInsurance">Dashboard</button>
+        </a>
+
+        <!-- Always visible CTA -->
+        <a th:href="@{/plans}">
+            <button class="btnInsurance">Get Insurance</button>
+        </a>
+
+        <!-- Login for anonymous users -->
+        <a th:href="@{/login}" sec:authorize="isAnonymous()">
+            <button class="btnInsurance">Login</button>
+        </a>
+
+        <!-- Profile avatar for authenticated users -->
+        <a th:href="@{/profile}" sec:authorize="isAuthenticated()" title="Profile"
+           style="display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:50%; background:#eee; color:#333; text-decoration:none; font-weight:600;">
+            <span th:text="${#authentication?.name?.substring(0,1).toUpperCase()}">U</span>
+        </a>
+
+        <!-- Logout for authenticated users (optional) -->
+        <!--        <form th:action="@{/logout}" method="post" sec:authorize="isAuthenticated()" style="margin:0;">-->
+        <!--            <button type="submit" class="btnInsurance">Logout</button>-->
+        <!--        </form>-->
     </div>
 </nav>
 
 <!-- ===== Page Header ===== -->
 <div class="pageTitle">
     <h2 class="pgt">Insurance plans <br><span class="highlight">for everyone.</span></h2>
-    <p class="sec">Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem cupiditate <br>alias quod assumenda nobis natus cumque iste totam. </p>
+    <p class="sec">Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem cupiditate <br>alias quod assumenda
+        nobis natus cumque iste totam. </p>
 </div>
 
 <!-- ===== Plans List ===== -->
 <section class="plans" th:if="${plans != null and !plans.isEmpty()}">
     <div class="plan-card" th:each="plan : ${plans}" th:if="${plan.status == 'active'}">
         <div class="ipimage">
-            <img th:src="@{${plan.coverImageUrl}}" th:if="${plan.coverImageUrl != null}" alt="Plan Image" class="img" />
-            <img src="/img/placeholder.png" th:unless="${plan.coverImageUrl != null}" alt="Plan Image" class="img" />
+            <img th:src="@{${plan.coverImageUrl}}" th:if="${plan.coverImageUrl != null}" alt="Plan Image" class="img"/>
+            <img src="/img/placeholder.png" th:unless="${plan.coverImageUrl != null}" alt="Plan Image" class="img"/>
         </div>
 
         <h3 class="head" th:text="${plan.title}">Plan Name</h3>
@@ -47,7 +79,7 @@
             <span class="timeplan">/mo</span>
         </div>
 
-        <hr />
+        <hr/>
 
         <div class="plan-benefits">
             <h4 class="includetitle">What's included?</h4>
@@ -80,7 +112,15 @@
             </p>
         </div>
 
-        <a class="Btn-start" th:href="@{/planProfile(planId=${plan.id})}">Get Insurance</a>
+        <div class="plan-actions">
+            <a class="Btn-start" th:href="@{/planProfile(planId=${plan.id})}">View Details</a>
+            <a class="Btn-buy" th:href="@{/payment(planId=${plan.id})}" sec:authorize="isAuthenticated()">
+                <i class="fas fa-shopping-cart"></i> Buy Now
+            </a>
+            <a class="Btn-buy" th:href="@{/login}" sec:authorize="isAnonymous()">
+                <i class="fas fa-sign-in-alt"></i> Login to Buy
+            </a>
+        </div>
     </div>
 </section>
 
@@ -90,7 +130,8 @@
     <div class="mainContainer">
         <div class="mainhalf1">
             <h3 class="headerof"><span class="highlight1">Get in touch</span> with us.</h3>
-            <p class="titles">Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem cupiditate alias quod assumenda nobis natus cumque iste totam.</p>
+            <p class="titles">Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem cupiditate alias quod
+                assumenda nobis natus cumque iste totam.</p>
             <button class="btn">Get in touch</button>
         </div>
         <div class="mainhalf2">

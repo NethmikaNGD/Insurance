@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -18,6 +19,7 @@
         <a th:href="@{/viewPlans}" class="active">Insurance Plans</a>
         <a th:href="@{/viewPlans}" class="active"> → View All Plans</a>
         <a th:href="@{/newPlan}" class="sub-item"> → Create Plan</a>
+        <a th:href="@{/auditLogs}">Audit Logs</a>
         <a href="#">Users</a>
         <a href="#">Claims</a>
         <a href="#">Reports</a>
@@ -28,12 +30,48 @@
 <!-- ===== Main Content ===== -->
 <main class="main">
     <header class="topbar">
-        <h1>View All Insurance Plans</h1>
+        <h1>Insurance Plan Create</h1>
         <div class="user">
-            <span class="role">Staff,</span>
-            <span class="username">Dineth</span>
+            <span class="role" sec:authorize="hasRole('ADMIN')">Admin,</span>
+            <span class="username" th:text="${session.CURRENT_USER_NAME}">User</span>
+
+            <!-- Profile dropdown for admin -->
+            <div class="profile-dropdown" style="position:relative; display:inline-block; margin-left:15px;">
+                <button class="profile-avatar" onclick="toggleDropdown()"
+                        style="display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:50%; background:#007bff; color:white; text-decoration:none; font-weight:600; border:none; cursor:pointer; font-size:14px;">
+                    <span th:text="${session.CURRENT_USER_NAME?.substring(0,1).toUpperCase()}">U</span>
+                </button>
+
+                <div id="profileDropdown" class="dropdown-content" style="display:none; position:absolute; right:0; top:100%; background:white; min-width:180px; box-shadow:0 4px 6px rgba(0,0,0,0.1); border-radius:8px; z-index:1000; margin-top:5px;">
+                    <div class="dropdown-header" style="padding:10px 12px; border-bottom:1px solid #eee; background:#f8f9fa;">
+                        <div style="font-weight:600; color:#333; font-size:13px;" th:text="${session.CURRENT_USER_NAME}">User Name</div>
+                        <div style="font-size:11px; color:#666;" th:text="${session.CURRENT_USER_EMAIL}">user@email.com</div>
+                    </div>
+                    <a th:href="@{/profile}" style="display:block; padding:10px 12px; color:#333; text-decoration:none; border-bottom:1px solid #f0f0f0; font-size:13px;">
+                        <span style="margin-right:6px;"></span> Profile
+                    </a>
+                    <a th:href="@{/dashboard}" style="display:block; padding:10px 12px; color:#333; text-decoration:none; border-bottom:1px solid #f0f0f0; font-size:13px;">
+                        <span style="margin-right:6px;"></span> Dashboard
+                    </a>
+                    <a th:href="@{/viewPlans}" style="display:block; padding:10px 12px; color:#333; text-decoration:none; border-bottom:1px solid #f0f0f0; font-size:13px;">
+                        <span style="margin-right:6px;"></span> View Plans
+                    </a>
+                    <form th:action="@{/logout}" method="post" style="margin:0;">
+                        <button type="submit" style="width:100%; padding:10px 12px; background:none; border:none; color:#dc3545; text-align:left; cursor:pointer; border-top:1px solid #f0f0f0; font-size:13px;">
+                            <span style="margin-right:6px;"></span> Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
     </header>
+    <!--    <header class="topbar">-->
+    <!--        <h1>View All Insurance Plans</h1>-->
+    <!--        <div class="user">-->
+    <!--            <span class="role">Staff,</span>-->
+    <!--            <span class="username">Dineth</span>-->
+    <!--        </div>-->
+    <!--    </header>-->
 
     <div class="container">
         <section class="card">
@@ -46,6 +84,10 @@
                 <a th:href="@{/newPlan}" class="btn-primary float-right">+ Create New Plan</a>
             </div>
 
+            <div class="who">
+                <span th:text="${session.CURRENT_USER_NAME}">User</span><br>
+                <small>ID: <span th:text="${session.CURRENT_USER_ID}">0</span></small>
+            </div>
             <!-- Insurance Plans Table -->
             <div class="table-section">
                 <!-- Empty state if no plans -->
@@ -66,7 +108,6 @@
                         <th>Created By</th>
                         <th>Category</th>
                         <th>Create Date</th>
-                        <th>Last Updated</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
@@ -82,7 +123,7 @@
                         <td th:text="${plan.category}">Health</td>
                         <!-- FIXED: Format LocalDateTime for createdAt -->
                         <td th:text="${plan.createdAt != null} ? ${#temporals.format(plan.createdAt, 'yyyy-MM-dd')} : 'N/A'">2025-01-15</td>
-                        <td th:text="${plan.updatedAt != null} ? ${#temporals.format(plan.updatedAt, 'yyyy-MM-dd')} : 'N/A'">2025-09-10</td>
+<!--                        <td th:text="${plan.updatedAt != null} ? ${#temporals.format(plan.updatedAt, 'yyyy-MM-dd')} : 'N/A'">2025-09-10</td>-->
                         <td>
                             <span th:classappend="'badge ' + (${plan.status == 'active'} ? 'success' : 'warning')"
                                   th:text="${plan.status}">Active</span>

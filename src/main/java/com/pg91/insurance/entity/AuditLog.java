@@ -1,16 +1,21 @@
-package com.pg91.entity;
+package com.pg91.insurance.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "Audit_Logs")
 @EntityListeners(AuditingEntityListener.class)
 public class AuditLog {
 
+    // Getters & Setters
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "log_id")
@@ -32,19 +37,4 @@ public class AuditLog {
     // Constructors
     public AuditLog() {}
 
-    // Getters & Setters
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
-
-    public Integer getAppUserId() { return appUserId; }
-    public void setAppUserId(Integer appUserId) { this.appUserId = appUserId; }
-
-    public String getAction() { return action; }
-    public void setAction(String action) { this.action = action; }
-
-    public String getDetails() { return details; }
-    public void setDetails(String details) { this.details = details; }
-
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }

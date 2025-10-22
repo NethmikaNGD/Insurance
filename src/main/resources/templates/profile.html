@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile</title>
+    <link rel="stylesheet" th:href="@{/css/indexcss.css}">
+    <link rel="stylesheet" th:href="@{/css/nav.css}">
+    <style>
+        .profile-card {
+            max-width: 720px;
+            margin: 40px auto;
+            padding: 24px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+        }
+
+        .avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .row {
+            margin: 8px 0;
+        }
+
+        .label {
+            color: #6b7280;
+            width: 160px;
+            display: inline-block;
+        }
+    </style>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        document.addEventListener('DOMContentLoaded', function () {
+            // future interactions
+        });
+        /*]]>*/
+    </script>
+</head>
+<body>
+<!-- Navigation -->
+<nav>
+    <h2 class="navHeader"><span class="highlight">HealthSure Insurance Lanka</span></h2>
+    <ul class="navLinks">
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Contact</a></li>
+    </ul>
+    <div class="getInsurance">
+        <a th:href="@{/dashboard}" sec:authorize="hasRole('ADMIN')">
+            <button class="btnInsurance">Dashboard</button>
+        </a>
+    </div>
+    <div class="getInsurance" style="display:flex; align-items:center; gap:10px;">
+        <!-- Dashboard only for ADMIN -->
+        <a th:href="@{/dashboard}" sec:authorize="hasRole('ADMIN')">
+            <button class="btnInsurance">Dashboard</button>
+        </a>
+
+        <!-- Always visible CTA -->
+        <a th:href="@{/plans}">
+            <button class="btnInsurance">Get Insurance</button>
+        </a>
+
+        <!-- Login for anonymous users -->
+        <a th:href="@{/login}" sec:authorize="isAnonymous()">
+            <button class="btnInsurance">Login</button>
+        </a>
+
+        <!-- Profile avatar for authenticated users -->
+        <a th:href="@{/profile}" sec:authorize="isAuthenticated()" title="Profile"
+           style="display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:50%; background:#eee; color:#333; text-decoration:none; font-weight:600;">
+            <span th:text="${#authentication?.name?.substring(0,1).toUpperCase()}">U</span>
+        </a>
+
+        <!-- Logout for authenticated users (optional) -->
+        <!--        <form th:action="@{/logout}" method="post" sec:authorize="isAuthenticated()" style="margin:0;">-->
+        <!--            <button type="submit" class="btnInsurance">Logout</button>-->
+        <!--        </form>-->
+    </div>
+</nav>
+
+
+<main class="profile-card">
+    <div style="display:flex; gap:16px; align-items:center;">
+        <div class="avatar" th:text="${#authentication?.name?.substring(0,1).toUpperCase()}">U</div>
+        <div>
+            <h2 th:text="${user != null} ? ${user.name} : ${#authentication?.name}">User</h2>
+            <div class="row"><span class="label">Email</span><span
+                    th:text="${user != null} ? ${user.email} : ${#authentication?.name}">email</span></div>
+            <div class="row"><span class="label">Role</span><span th:text="${#authentication?.principal?.authorities}">ROLE_USER</span>
+            </div>
+            <div class="row" th:if="${user != null}"><span class="label">Status</span><span th:text="${user.status}">active</span>
+            </div>
+            <div class="row" th:if="${user != null}"><span class="label">Joined</span><span
+                    th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd HH:mm')}">2025-01-01</span></div>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>
+
+

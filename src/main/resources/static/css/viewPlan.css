@@ -81,3 +81,16 @@ table th {
     min-width: auto;
     padding: 8px 16px;
 }
+.btn-delete {
+    background: #ff2222;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.2s ease;
+    font-weight: 500;
+}

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Audit Logs - HealthSure Lanka</title>
+    <link rel="stylesheet" th:href="@{/css/adminDashCss.css}">
+    <link rel="stylesheet" th:href="@{/css/from.css}">
+    <style>
+        .audit-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .audit-table th,
+        .audit-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        .audit-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+        .audit-table tr:hover {
+            background: #f8f9fa;
+        }
+        .action-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .action-create { background: #d4edda; color: #155724; }
+        .action-update { background: #fff3cd; color: #856404; }
+        .action-delete { background: #f8d7da; color: #721c24; }
+        .action-view { background: #cce5ff; color: #004085; }
+        .action-access { background: #e2e3e5; color: #383d41; }
+        .filter-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+        }
+        .filter-btn:hover {
+            background: #f8f9fa;
+        }
+        .filter-btn.active {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+<!-- ===== Sidebar ===== -->
+<aside class="sidebar">
+    <div class="brand">HealthSure Lanka</div>
+    <nav>
+        <a th:href="@{/dashboard}">Dashboard</a>
+        <a th:href="@{/viewPlans}">Insurance Plans</a>
+        <a th:href="@{/auditLogs}" class="active">Audit Logs</a>
+        <a href="#">Users</a>
+        <a href="#">Claims</a>
+        <a href="#">Reports</a>
+        <a href="#">Settings</a>
+    </nav>
+</aside>
+
+<!-- ===== Main Content ===== -->
+<main class="main">
+
+    <header class="topbar">
+        <h1>Insurance Plan Create</h1>
+        <div class="user">
+            <span class="role" sec:authorize="hasRole('ADMIN')">Admin,</span>
+            <span class="username" th:text="${session.CURRENT_USER_NAME}">User</span>
+
+            <!-- Profile dropdown for admin -->
+            <div class="profile-dropdown" style="position:relative; display:inline-block; margin-left:15px;">
+                <button class="profile-avatar" onclick="toggleDropdown()"
+                        style="display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:50%; background:#007bff; color:white; text-decoration:none; font-weight:600; border:none; cursor:pointer; font-size:14px;">
+                    <span th:text="${session.CURRENT_USER_NAME?.substring(0,1).toUpperCase()}">U</span>
+                </button>
+
+                <div id="profileDropdown" class="dropdown-content" style="display:none; position:absolute; right:0; top:100%; background:white; min-width:180px; box-shadow:0 4px 6px rgba(0,0,0,0.1); border-radius:8px; z-index:1000; margin-top:5px;">
+                    <div class="dropdown-header" style="padding:10px 12px; border-bottom:1px solid #eee; background:#f8f9fa;">
+                        <div style="font-weight:600; color:#333; font-size:13px;" th:text="${session.CURRENT_USER_NAME}">User Name</div>
+                        <div style="font-size:11px; color:#666;" th:text="${session.CURRENT_USER_EMAIL}">user@email.com</div>
+                    </div>
+                    <a th:href="@{/profile}" style="display:block; padding:10px 12px; color:#333; text-decoration:none; border-bottom:1px solid #f0f0f0; font-size:13px;">
+                        <span style="margin-right:6px;"></span> Profile
+                    </a>
+                    <a th:href="@{/dashboard}" style="display:block; padding:10px 12px; color:#333; text-decoration:none; border-bottom:1px solid #f0f0f0; font-size:13px;">
+                        <span style="margin-right:6px;"></span> Dashboard
+                    </a>
+                    <a th:href="@{/viewPlans}" style="display:block; padding:10px 12px; color:#333; text-decoration:none; border-bottom:1px solid #f0f0f0; font-size:13px;">
+                        <span style="margin-right:6px;"></span> View Plans
+                    </a>
+                    <form th:action="@{/logout}" method="post" style="margin:0;">
+                        <button type="submit" style="width:100%; padding:10px 12px; background:none; border:none; color:#dc3545; text-align:left; cursor:pointer; border-top:1px solid #f0f0f0; font-size:13px;">
+                            <span style="margin-right:6px;"></span> Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </header>
+<!--    <header class="topbar">-->
+<!--        <h1>Audit Logs</h1>-->
+<!--        <div class="user">-->
+<!--            <span class="role" sec:authorize="hasRole('ADMIN')">Admin,</span>-->
+<!--            <span class="username" th:text="${session.CURRENT_USER_NAME}">User</span>-->
+<!--            -->
+<!--            &lt;!&ndash; Profile dropdown for admin &ndash;&gt;-->
+<!--            <div class="profile-dropdown" style="position:relative; display:inline-block; margin-left:15px;">-->
+<!--                <button class="profile-avatar" onclick="toggleDropdown()" -->
+<!--                        style="display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:50%; background:#007bff; color:white; text-decoration:none; font-weight:600; border:none; cursor:pointer; font-size:14px;">-->
+<!--                    <span th:text="${session.CURRENT_USER_NAME?.substring(0,1).toUpperCase()}">U</span>-->
+<!--                </button>-->
+<!--                -->
+<!--                <div id="profileDropdown" class="dropdown-content" style="display:none; position:absolute; right:0; top:100%; background:white; min-width:180px; box-shadow:0 4px 6px rgba(0,0,0,0.1); border-radius:8px; z-index:1000; margin-top:5px;">-->
+<!--                    <div class="dropdown-header" style="padding:10px 12px; border-bottom:1px solid #eee; background:#f8f9fa;">-->
+<!--                        <div style="font-weight:600; color:#333; font-size:13px;" th:text="${session.CURRENT_USER_NAME}">User Name</div>-->
+<!--                        <div style="font-size:11px; color:#666;" th:text="${session.CURRENT_USER_EMAIL}">user@email.com</div>-->
+<!--                    </div>-->
+<!--                    <a th:href="@{/profile}" style="display:block; padding:10px 12px; color:#333; text-decoration:none; border-bottom:1px solid #f0f0f0; font-size:13px;">-->
+<!--                        <span style="margin-right:6px;">👤</span> Profile-->
+<!--                    </a>-->
+<!--                    <a th:href="@{/dashboard}" style="display:block; padding:10px 12px; color:#333; text-decoration:none; border-bottom:1px solid #f0f0f0; font-size:13px;">-->
+<!--                        <span style="margin-right:6px;">⚙️</span> Dashboard-->
+<!--                    </a>-->
+<!--                    <a th:href="@{/viewPlans}" style="display:block; padding:10px 12px; color:#333; text-decoration:none; border-bottom:1px solid #f0f0f0; font-size:13px;">-->
+<!--                        <span style="margin-right:6px;">📋</span> View Plans-->
+<!--                    </a>-->
+<!--                    <form th:action="@{/logout}" method="post" style="margin:0;">-->
+<!--                        <button type="submit" style="width:100%; padding:10px 12px; background:none; border:none; color:#dc3545; text-align:left; cursor:pointer; border-top:1px solid #f0f0f0; font-size:13px;">-->
+<!--                            <span style="margin-right:6px;">🚪</span> Logout-->
+<!--                        </button>-->
+<!--                    </form>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </header>-->
+
+    <div class="container">
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" th:text="${totalLogs}">0</div>
+                <div class="stat-label">Total Logs</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" th:text="${auditLogs != null ? auditLogs.stream().filter(log -> log.getAction().contains('CREATE')).count() : 0}">0</div>
+                <div class="stat-label">Create Actions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" th:text="${auditLogs != null ? auditLogs.stream().filter(log -> log.getAction().contains('UPDATE')).count() : 0}">0</div>
+                <div class="stat-label">Update Actions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" th:text="${auditLogs != null ? auditLogs.stream().filter(log -> log.getAction().contains('DELETE')).count() : 0}">0</div>
+                <div class="stat-label">Delete Actions</div>
+            </div>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <h3>Filter by Action Type</h3>
+            <div class="filter-buttons">
+                <a th:href="@{/auditLogs}" class="filter-btn" th:classappend="${filteredAction == null ? 'active' : ''}">All Actions</a>
+                <a th:href="@{/auditLogsByAction(action='CREATE_PLAN')}" class="filter-btn" th:classappend="${filteredAction == 'CREATE_PLAN' ? 'active' : ''}">Create Plans</a>
+                <a th:href="@{/auditLogsByAction(action='UPDATE_PLAN')}" class="filter-btn" th:classappend="${filteredAction == 'UPDATE_PLAN' ? 'active' : ''}">Update Plans</a>
+                <a th:href="@{/auditLogsByAction(action='DELETE_PLAN')}" class="filter-btn" th:classappend="${filteredAction == 'DELETE_PLAN' ? 'active' : ''}">Delete Plans</a>
+                <a th:href="@{/auditLogsByAction(action='VIEW_ALL_PLANS')}" class="filter-btn" th:classappend="${filteredAction == 'VIEW_ALL_PLANS' ? 'active' : ''}">View Plans</a>
+                <a th:href="@{/auditLogsByAction(action='ACCESS_DASHBOARD')}" class="filter-btn" th:classappend="${filteredAction == 'ACCESS_DASHBOARD' ? 'active' : ''}">Dashboard Access</a>
+                <a th:href="@{/myAuditLogs}" class="filter-btn" th:classappend="${isMyLogs ? 'active' : ''}">My Actions</a>
+            </div>
+        </div>
+
+        <!-- Audit Logs Table -->
+        <section class="card">
+            <div class="card-head">
+                <h2>Audit Logs</h2>
+                <div class="who">
+                    <span th:text="${session.CURRENT_USER_NAME}">User</span><br>
+                    <small>ID: <span th:text="${session.CURRENT_USER_ID}">0</span></small>
+                </div>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table class="audit-table">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>User ID</th>
+                            <th>Action</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="log : ${auditLogs}">
+                            <td th:text="${#temporals.format(log.createdAt, 'yyyy-MM-dd HH:mm:ss')}">2025-01-01 12:00:00</td>
+                            <td th:text="${log.appUserId}">1</td>
+                            <td>
+                                <span th:class="'action-badge ' + ${#strings.startsWith(log.action, 'CREATE') ? 'action-create' : 
+                                                                    #strings.startsWith(log.action, 'UPDATE') ? 'action-update' : 
+                                                                    #strings.startsWith(log.action, 'DELETE') ? 'action-delete' : 
+                                                                    #strings.startsWith(log.action, 'VIEW') ? 'action-view' : 'action-access'}"
+                                      th:text="${log.action}">CREATE_PLAN</span>
+                            </td>
+                            <td th:text="${log.details}">Created new insurance plan</td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(auditLogs)}">
+                            <td colspan="4" style="text-align: center; padding: 40px; color: #666;">
+                                No audit logs found.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</main>
+
+<script>
+    // Profile dropdown functionality
+    function toggleDropdown() {
+        const dropdown = document.getElementById('profileDropdown');
+        if (dropdown.style.display === 'none' || dropdown.style.display === '') {
+            dropdown.style.display = 'block';
+        } else {
+            dropdown.style.display = 'none';
+        }
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('profileDropdown');
+        const profileButton = document.querySelector('.profile-avatar');
+        
+        if (dropdown && profileButton) {
+            if (!profileButton.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.style.display = 'none';
+            }
+        }
+    });
+</script>
+
+</body>
+</html>

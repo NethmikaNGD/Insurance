@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/payment.css}">
+    <link rel="stylesheet" th:href="@{/css/nav.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Complete Your Payment</title>
+</head>
+<body>
+
+<nav>
+    <h2 class="navHeader"><span>HealthSure Insurance Lanka</span></h2>
+    <ul class="navLinks">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Contact</a></li>
+    </ul>
+    <div class="getInsurance">
+        <button class="btnInsurance">Get Insurance</button>
+    </div>
+</nav>
+
+<section class="payment-container">
+    <div class="payment-layout">
+
+        <div class="order-summary">
+            <h2>Order Summary</h2>
+            <div class="summary-card" th:if="${plan}">
+                <div class="plan-details">
+                    <img th:src="@{/css/image/hh.jpg}" alt="insurance_image" class="summary-image">
+                    <div class="plan-info">
+                        <h3 class="plan-title" th:text="${plan.title}">Life Insurance</h3>
+                        <p class="plan-duration" id="summary-duration">Monthly Plan</p>
+                    </div>
+                </div>
+                <hr>
+                <div class="price-breakdown">
+                    <div class="price-row">
+                        <span>Plan Price:</span>
+                        <span id="summary-plan-price" th:text="'$' + ${#numbers.formatDecimal(plan.priceMonth, 1, 'COMMA', 2, 'POINT')}">$0.00</span>
+                    </div>
+                    <div class="price-row">
+                        <span>Taxes & Fees:</span>
+                        <span>$0.00</span>
+                    </div>
+                </div>
+                <hr>
+                <div class="price-total">
+                    <span class="total-text">Total (USD)</span>
+                    <span class="total-amount" id="summary-total-amount" th:text="'$' + ${#numbers.formatDecimal(plan.priceMonth, 1, 'COMMA', 2, 'POINT')}">$0.00</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="payment-form">
+            <h2>Payment Details</h2>
+
+            <div th:if="${error}" class="alert alert-danger" role="alert">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span th:text="${error}">Error message</span>
+            </div>
+            <div th:if="${success}" class="alert alert-success" role="alert">
+                <i class="fas fa-check-circle"></i>
+                <span th:text="${success}">Success message</span>
+            </div>
+
+            <form th:action="@{/processPayment}" th:object="${payment}" method="post">
+                <input type="hidden" th:field="*{appUserId}">
+                <input type="hidden" th:field="*{planId}" id="planId">
+
+                <input type="hidden" id="priceMonth" th:value="${plan.priceMonth}">
+                <input type="hidden" id="price6Month" th:value="${plan.price6m}">
+                <input type="hidden" id="priceYear" th:value="${plan.priceYear}">
+
+                <div class="form-group">
+                    <label class="form-label">Payment Duration</label>
+                    <div class="duration-selector">
+                        <div class="duration-btn active" data-duration="month" data-text="Monthly Plan">
+                            Monthly
+                        </div>
+                        <div class="duration-btn" data-duration="6m" data-text="6 Month Plan">
+                            6 Months
+                        </div>
+                        <div class="duration-btn" data-duration="year" data-text="1 Year Plan">
+                            Yearly
+                        </div>
+                    </div>
+                </div>
+
+                <div class="amount-display">
+                    <i class="fas fa-dollar-sign"></i>
+                    <span id="amountDisplay" th:text="${#numbers.formatDecimal(plan.priceMonth, 1, 'COMMA', 2, 'POINT')}">0.00</span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Payment Method</label>
+                    <div th:each="method : ${availablePaymentMethods}">
+                        <div class="payment-method-card" th:data-method="${method.name()}">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="paymentMethod"
+                                       th:id="${method.name()}" th:value="${method.name()}"
+                                       th:checked="${method.name() == 'CREDIT_CARD'}">
+                                <label class="form-check-label" th:for="${method.name()}">
+                                    <i class="fas fa-credit-card"></i>
+                                    <span th:text="${method.displayName}">Payment Method</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="cardHolderName">Cardholder Name *</label>
+                    <input type="text" id="cardHolderName" th:field="*{cardHolderName}" placeholder="John M. Doe" required 
+                           pattern="[A-Za-z\s]{2,50}" title="Please enter a valid name (2-50 characters, letters and spaces only)">
+                    <div class="error-message" th:if="${#fields.hasErrors('cardHolderName')}" th:errors="*{cardHolderName}"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="cardNo">Card Number *</label>
+                    <input type="text" id="cardNo" th:field="*{cardNo}" placeholder="1234 5678 9012 3456" required 
+                           pattern="[0-9\s]{13,19}" title="Please enter a valid 13-19 digit card number">
+                    <div class="error-message" th:if="${#fields.hasErrors('cardNo')}" th:errors="*{cardNo}"></div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="validDate">Expiry Date *</label>
+                        <input type="date" id="validDate" th:field="*{validDate}" required 
+                               title="Please select a future expiry date">
+                        <div class="error-message" th:if="${#fields.hasErrors('validDate')}" th:errors="*{validDate}"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="securityCode">CVC *</label>
+                        <input type="number" id="securityCode" th:field="*{securityCode}" placeholder="123" 
+                               min="100" max="9999" required title="Please enter a valid 3-4 digit CVC">
+                        <div class="error-message" th:if="${#fields.hasErrors('securityCode')}" th:errors="*{securityCode}"></div>
+                    </div>
+                </div>
+
+                <input type="hidden" id="amountPaid" th:field="*{amountPaid}" th:value="${plan.priceMonth}">
+
+                <div class="security-note">
+                    <i class="fas fa-lock"></i>
+                    <strong>Secure Payment:</strong> Your payment information is encrypted and secure.
+                </div>
+
+                <div class="form-buttons">
+                    <button type="submit" class="btnInsurance">
+                        <i class="fas fa-lock"></i> Process Payment
+                    </button>
+                    <a th:href="@{/plans}" class="btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Plans
+                    </a>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</section>
+
+<script>
+    // Store prices from Thymeleaf
+    const prices = {
+        month: parseFloat(document.getElementById('priceMonth').value),
+        '6m': parseFloat(document.getElementById('price6Month').value),
+        year: parseFloat(document.getElementById('priceYear').value)
+    };
+
+    // Get elements to update
+    const amountDisplay = document.getElementById('amountDisplay');
+    const amountPaidInput = document.getElementById('amountPaid');
+    const summaryDuration = document.getElementById('summary-duration');
+    const summaryPlanPrice = document.getElementById('summary-plan-price');
+    const summaryTotalAmount = document.getElementById('summary-total-amount');
+
+    // 1. Payment method selection
+    document.querySelectorAll('.payment-method-card').forEach(card => {
+        card.addEventListener('click', function() {
+            document.querySelectorAll('.payment-method-card').forEach(c => c.classList.remove('selected'));
+            this.classList.add('selected');
+            this.querySelector('input[type="radio"]').checked = true;
+        });
+    });
+    // Set initial selected state for payment method
+    document.querySelector('.payment-method-card input[type="radio"]:checked')
+        .closest('.payment-method-card').classList.add('selected');
+
+    // 2. Duration selection
+    document.querySelectorAll('.duration-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.duration-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+
+            const duration = this.dataset.duration;
+            const durationText = this.dataset.text;
+            updatePaymentAmount(duration, durationText);
+        });
+    });
+
+    // 3. Update payment amount function
+    function updatePaymentAmount(duration, durationText) {
+        const amount = prices[duration];
+        if (amount !== undefined) {
+            const formattedAmount = amount.toFixed(2);
+
+            // Update right column (form)
+            amountDisplay.textContent = formattedAmount;
+            amountPaidInput.value = formattedAmount;
+
+            // Update left column (summary)
+            summaryDuration.textContent = durationText;
+            summaryPlanPrice.textContent = `$${formattedAmount}`;
+            summaryTotalAmount.textContent = `$${formattedAmount}`;
+        } else {
+            console.error('Invalid duration selected:', duration);
+        }
+    }
+
+    // 4. Format card number and validate
+    document.getElementById('cardNo').addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/gi, '');
+        let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+        e.target.value = formattedValue.substring(0, 19); // Max 16 digits + 3 spaces
+        
+        // Validate card number length
+        if (value.length >= 13 && value.length <= 19) {
+            e.target.setCustomValidity('');
+        } else {
+            e.target.setCustomValidity('Please enter a valid card number (13-19 digits)');
+        }
+    });
+
+    // 5. Set minimum date for expiry date
+    document.getElementById('validDate').min = new Date().toISOString().split('T')[0];
+    
+    // 6. Validate expiry date
+    document.getElementById('validDate').addEventListener('change', function(e) {
+        const selectedDate = new Date(e.target.value);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        if (selectedDate <= today) {
+            e.target.setCustomValidity('Please select a future expiry date');
+        } else {
+            e.target.setCustomValidity('');
+        }
+    });
+
+    // 7. Validate CVC
+    document.getElementById('securityCode').addEventListener('input', function(e) {
+        const value = e.target.value;
+        if (value.length >= 3 && value.length <= 4) {
+            e.target.setCustomValidity('');
+        } else {
+            e.target.setCustomValidity('Please enter a valid 3-4 digit CVC');
+        }
+    });
+
+    // 8. Validate cardholder name
+    document.getElementById('cardHolderName').addEventListener('input', function(e) {
+        const value = e.target.value.trim();
+        if (value.length >= 2 && value.length <= 50 && /^[A-Za-z\s]+$/.test(value)) {
+            e.target.setCustomValidity('');
+        } else {
+            e.target.setCustomValidity('Please enter a valid name (2-50 characters, letters and spaces only)');
+        }
+    });
+</script>
+
+</body>
+</html>
