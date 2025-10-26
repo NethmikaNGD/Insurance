@@ -22,11 +22,11 @@
         <li><a href="#">About</a></li>
         <li><a href="#">Contact</a></li>
     </ul>
-    <div class="getInsurance">
-        <a th:href="@{/dashboard}" sec:authorize="hasRole('ADMIN')">
-            <button class="btnInsurance">Dashboard</button>
-        </a>
-    </div>
+<!--    <div class="getInsurance">-->
+<!--        <a th:href="@{/dashboard}" sec:authorize="hasRole('ADMIN')">-->
+<!--            <button class="btnInsurance">Dashboard</button>-->
+<!--        </a>-->
+<!--    </div>-->
     <div class="getInsurance" style="display:flex; align-items:center; gap:10px;">
         <!-- Dashboard only for ADMIN -->
         <a th:href="@{/dashboard}" sec:authorize="hasRole('ADMIN')">
